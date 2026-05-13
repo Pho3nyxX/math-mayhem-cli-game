@@ -1,5 +1,7 @@
 import readline from "readline";
 import chalk from "chalk";
+import { writeFile, readFile } from "node:fs";
+
 
 (function () {
 
@@ -62,6 +64,10 @@ import chalk from "chalk";
     let currentQuestion;
     let correctQuestions = [];
     let incorrectQuestions = [];
+    const path = "./scores.json";
+    let currentUser;
+    let scores = [];
+    let highest;
 
     function getAnswer(choice, answer) {
         let correctAnswer;
@@ -136,6 +142,8 @@ import chalk from "chalk";
             console.log("\nIncorrect Questions:");
             console.log(incorrectQuestions);
 
+            saveScore(currentUser, correctCount);
+
             readLine.close();
             return;
         }
@@ -159,6 +167,40 @@ import chalk from "chalk";
         }, 10000);
     }
 
+    // save user score
+    function saveScore(user, score) {
+
+        readFile(path, "utf-8", (err, data) => {
+
+            // check if file exist
+            if (!err && data) {
+                try {
+                    scores = JSON.parse(data);
+                } catch {
+                    scores = [];
+                }
+            }
+
+            // add new score
+            scores.push({ user, score });
+
+            writeFile(path, JSON.stringify(scores, null, 2), (err) => {
+                if (err) throw err;
+
+                // calculate highest score
+                highest = scores.reduce((max, current) => {
+                    if (current.score > max.score) {
+                        return current;
+                    } else {
+                        return max;
+                    }
+                });
+
+                console.log(`\nHighest Score is ${highest.user} : ${highest.score}`);
+            })
+        });
+    }
+
     // loop through questions & listen for user input
     readLine.on("line", (givenAnswer) => {
         if (answered) return;
@@ -177,7 +219,14 @@ import chalk from "chalk";
     readLine.question("\nDo you wish to continue? (Type 'yes' or 'no'). \n", function (userAnswer) {
 
         if (userAnswer.toLowerCase() == 'yes') {
-            askQuestions();
+            // get user name
+            readLine.question("\nWhat is your name? ", function (name) {
+                currentUser = name;
+
+                console.log("\nWelcome " + currentUser);
+
+                askQuestions();
+            });
         } else {
             readLine.close();
         }
