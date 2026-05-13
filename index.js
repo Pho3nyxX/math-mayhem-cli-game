@@ -32,7 +32,22 @@ import { writeFile, readFile } from "node:fs";
         7: "a + d?",
         8: "e + ' ' + f?",
         9: "b + g * h?",
-        10: "(b + g) ** 2?"
+        10: "(b + g) ** 2?",
+        11: "a - c?",
+        12: "b + c + a?",
+        13: "d + ' ' + e + ' ' + f?",
+        14: "h + a * b?",
+        15: "(h + a) * b?",
+        16: "g + a?",
+        17: "g + b + c?",
+        18: "c / b?",
+        19: "c % b?",
+        20: "a * b + c?",
+        21: "a * (b + c)?",
+        22: "h / (b + g)?",
+        23: "i + ' ' + d?",
+        24: "i + ' ' + e + ' ' + f?",
+        25: "a + b + c + d?"
     };
 
     // print instructions
@@ -68,6 +83,8 @@ import { writeFile, readFile } from "node:fs";
     let currentUser;
     let scores = [];
     let highest;
+    let shuffle = shuffleQuestions(questionKeys, 10);
+
 
     function getAnswer(choice, answer) {
         let correctAnswer;
@@ -103,6 +120,51 @@ import { writeFile, readFile } from "node:fs";
             case 10:
                 correctAnswer = Number((b + g) ** 2);
                 break;
+            case 11:
+                correctAnswer = a - c;
+                break;
+            case 12:
+                correctAnswer = b + c + a;
+                break;
+            case 13:
+                correctAnswer = d + ' ' + e + ' ' + f;
+                break;
+            case 14:
+                correctAnswer = h + a * b;
+                break;
+            case 15:
+                correctAnswer = (h + a) * b;
+                break;
+            case 16:
+                correctAnswer = g + a;
+                break;
+            case 17:
+                correctAnswer = g + b + c;
+                break;
+            case 18:
+                correctAnswer = c / b;
+                break;
+            case 19:
+                correctAnswer = c % b;
+                break;
+            case 20:
+                correctAnswer = a * b + c;
+                break;
+            case 21:
+                correctAnswer = a * (b + c);
+                break;
+            case 22:
+                correctAnswer = Number(h / (b + g));
+                break;
+            case 23:
+                correctAnswer = i + ' ' + d;
+                break;
+            case 24:
+                correctAnswer = i + ' ' + e + ' ' + f;
+                break;
+            case 25:
+                correctAnswer = a + b + c + d;
+                break;
             default:
                 console.log("Oops.");
                 incorrectCount++;
@@ -122,8 +184,14 @@ import { writeFile, readFile } from "node:fs";
         }
     }
 
+    // randomly shuffle the question array and returns the first 'num' items
+    function shuffleQuestions(questionKeys, num) {
+        const shuffled = [...questionKeys].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, num);
+    }
+
     function askQuestions() {
-        if (index >= questionKeys.length) {
+        if (index >= shuffle.length) {
             console.log("\n--------------------------------");
             console.log("We've come to the end! You got...");
             console.log(`Correct: ${correctCount}`);
@@ -148,7 +216,7 @@ import { writeFile, readFile } from "node:fs";
             return;
         }
 
-        let questionByKey = questionKeys[index];
+        let questionByKey = shuffle[index];
         index++;
 
         currentQuestion = questionByKey;
