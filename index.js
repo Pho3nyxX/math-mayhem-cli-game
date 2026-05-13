@@ -191,6 +191,8 @@ import { writeFile, readFile } from "node:fs";
     }
 
     function askQuestions() {
+        console.clear();
+        
         if (index >= shuffle.length) {
             console.log("\n--------------------------------");
             console.log("We've come to the end! You got...");
