@@ -55,7 +55,7 @@ import { writeFile, readFile } from "node:fs";
     console.log('Welcome to Math Mayhem');
     console.log('You will be given 10 questions.');
     console.log('You have 10 seconds per question.');
-    console.log('8 and above pass. 7 and below fail');
+    console.log('8 and above pass. 7 and below fail.');
     console.log('---------------------------------------------------------------------------------- \n');
 
     // show variable and value
@@ -75,6 +75,7 @@ import { writeFile, readFile } from "node:fs";
     let incorrectCount = 0;
     let index = 0;
     let timer;
+    let warningTimer;
     let answered = false;
     let currentQuestion;
     let correctQuestions = [];
@@ -192,7 +193,7 @@ import { writeFile, readFile } from "node:fs";
 
     function askQuestions() {
         console.clear();
-        
+
         if (index >= shuffle.length) {
             console.log("\n--------------------------------");
             console.log("We've come to the end! You got...");
@@ -226,13 +227,22 @@ import { writeFile, readFile } from "node:fs";
 
         process.stdout.write(`\nWhat is ${questions[questionByKey]} `);
 
+        // start 5s timer
+        warningTimer = setTimeout(() => {
+            console.log("\n" + chalk.red("You have 5 seconds left!"));
+        }, 5000);
+
         // start 10s timer
         timer = setTimeout(() => {
             if (!answered) {
+                answered = true;
                 console.log("Time's up!");
                 incorrectCount++;
                 incorrectQuestions.push(questions[questionByKey]);
-                askQuestions();
+                
+                setTimeout(() => {
+                    askQuestions();
+                }, 1500);
             }
         }, 10000);
     }
@@ -278,7 +288,10 @@ import { writeFile, readFile } from "node:fs";
         answered = true;
 
         // stop timer if user answer in time
-        clearTimeout(timer);
+        if (timer) {
+            clearTimeout(timer);
+            clearTimeout(warningTimer);
+        }
 
         getAnswer(Number(currentQuestion), givenAnswer);
 
