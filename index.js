@@ -176,11 +176,13 @@ import { writeFile, readFile } from "node:fs";
             console.log(chalk.green("✔") + " Correct.");
             // track correct answers
             correctCount++;
+            // questions user got right
             correctQuestions.push(questions[choice]);
         } else {
-            console.log(chalk.red("✖") + " Incorrect.");
+            console.log(chalk.red("✖") + ` Incorrect. Correct answer: ${correctAnswer}`);
             // track incorrect answers
             incorrectCount++;
+            // questions user got wrong
             incorrectQuestions.push(questions[choice]);
         }
     }
@@ -295,7 +297,9 @@ import { writeFile, readFile } from "node:fs";
 
         getAnswer(Number(currentQuestion), givenAnswer);
 
-        askQuestions();
+        setTimeout(() => {
+            askQuestions();
+        }, 1500);
     });
 
     // get user input (yes or no)
