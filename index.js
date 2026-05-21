@@ -85,6 +85,8 @@ import { writeFile, readFile } from "node:fs";
     let scores = [];
     let highest;
     let shuffle = shuffleQuestions(questionKeys, 10);
+    let timeLeft = 10;
+    let countdown;
 
 
     function getAnswer(choice, answer) {
@@ -221,6 +223,12 @@ import { writeFile, readFile } from "node:fs";
             return;
         }
 
+        // reset timer for each question
+        timeLeft = 10;
+
+        // clear any previous countdown
+        clearInterval(countdown);
+
         let questionByKey = shuffle[index];
         index++;
 
@@ -228,25 +236,49 @@ import { writeFile, readFile } from "node:fs";
         answered = false;
 
         process.stdout.write(`\nWhat is ${questions[questionByKey]} `);
+        console.log("");
 
         // start 5s timer
-        warningTimer = setTimeout(() => {
-            console.log("\n" + chalk.red("You have 5 seconds left!"));
-        }, 5000);
+        // warningTimer = setTimeout(() => {
+        //     console.log("\n" + chalk.red("You have 5 seconds left!"));
+        // }, 5000);
+
+        countdown = setInterval(() => {
+            process.stdout.write(`\rTime left: ${chalk.red(timeLeft + "s")}   `);
+
+            timeLeft--;
+
+            if (timeLeft < 0) {
+                clearInterval(countdown);
+
+                if (!answered) {
+                    answered = true;
+                    console.log("Time's up!");
+
+                    incorrectCount++;
+                    incorrectQuestions.push(questions[questionByKey]);
+
+                    setTimeout(() => {
+                        askQuestions();
+                    }, 1500);
+                }
+            }
+        }, 1000);
 
         // start 10s timer
-        timer = setTimeout(() => {
-            if (!answered) {
-                answered = true;
-                console.log("Time's up!");
-                incorrectCount++;
-                incorrectQuestions.push(questions[questionByKey]);
-                
-                setTimeout(() => {
-                    askQuestions();
-                }, 1500);
-            }
-        }, 10000);
+        // timer = setTimeout(() => {
+        //     if (!answered) {
+        //         answered = true;
+        //         console.log("Time's up!");
+
+        //         incorrectCount++;
+        //         incorrectQuestions.push(questions[questionByKey]);
+
+        //         setTimeout(() => {
+        //             askQuestions();
+        //         }, 1500);
+        //     }
+        // }, 10000);
     }
 
     // save user score
