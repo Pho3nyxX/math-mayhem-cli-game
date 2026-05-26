@@ -174,7 +174,7 @@ import { writeFile, readFile } from "node:fs";
                 return;
         }
 
-        if (answer == correctAnswer) {
+        if (answer === correctAnswer) {
             console.log(chalk.green("✔") + " Correct.");
             // track correct answers
             correctCount++;
@@ -195,10 +195,30 @@ import { writeFile, readFile } from "node:fs";
         return shuffled.slice(0, num);
     }
 
+    // bring game back to start
+    function resetGame() {
+        correctCount = 0;
+        incorrectCount = 0;
+        index = 0;
+        answered = false;
+        shuffle = shuffleQuestions(questionKeys, 10);
+
+        // clear timers
+        clearTimeout(timer);
+        clearTimeout(warningTimer);
+
+        console.clear();
+        console.log("....Start of New Game....");
+    }
+
     function askQuestions() {
         console.clear();
 
         if (index >= shuffle.length) {
+            clearInterval(countdown);
+            clearTimeout(timer);
+            clearTimeout(warningTimer);
+
             console.log("\n--------------------------------");
             console.log("We've come to the end! You got...");
             console.log(`Correct: ${correctCount}`);
@@ -217,9 +237,17 @@ import { writeFile, readFile } from "node:fs";
             console.log("\nIncorrect Questions:");
             console.log(incorrectQuestions);
 
-            saveScore(currentUser, correctCount);
+            saveScore(currentUser, correctCount, () => {
+                readLine.question("\nDo you wish to play again? (Type 'yes', 'y' or 'no', 'n'). \n", function (replayAnswer) {
+                    if (replayAnswer.toLowerCase() === 'yes' || replayAnswer.toLowerCase() === 'y') {
+                        resetGame();
+                        askQuestions();
+                    } else {
+                        readLine.close();
+                    }
+                });
+            });
 
-            readLine.close();
             return;
         }
 
@@ -282,7 +310,7 @@ import { writeFile, readFile } from "node:fs";
     }
 
     // save user score
-    function saveScore(user, score) {
+    function saveScore(user, score, callback) {
 
         readFile(path, "utf-8", (err, data) => {
 
@@ -311,6 +339,8 @@ import { writeFile, readFile } from "node:fs";
                 });
 
                 console.log(`\nHighest Score is ${highest.user} : ${highest.score}`);
+
+                callback();
             })
         });
     }
@@ -323,6 +353,7 @@ import { writeFile, readFile } from "node:fs";
 
         // stop timer if user answer in time
         if (timer) {
+            clearInterval(countdown);
             clearTimeout(timer);
             clearTimeout(warningTimer);
         }
@@ -335,9 +366,9 @@ import { writeFile, readFile } from "node:fs";
     });
 
     // get user input (yes or no)
-    readLine.question("\nDo you wish to continue? (Type 'yes' or 'no'). \n", function (userAnswer) {
+    readLine.question("\nDo you wish to continue? (Type 'yes', 'y' or 'no', 'n'). \n", function (userAnswer) {
 
-        if (userAnswer.toLowerCase() == 'yes') {
+        if (userAnswer.toLowerCase() === 'yes' || userAnswer.toLowerCase() === 'y') {
             // get user name
             readLine.question("\nWhat is your name? ", function (name) {
                 currentUser = name;
