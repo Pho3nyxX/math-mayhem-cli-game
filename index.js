@@ -23,31 +23,51 @@ import { writeFile, readFile } from "node:fs";
 
     // question list
     const questions = {
-        1: "a + b?",
-        2: "b * c?",
-        3: "h - a?",
-        4: "c ** 2?",
-        5: "h / b?",
-        6: "h % b?",
-        7: "a + d?",
-        8: "e + ' ' + f?",
-        9: "b + g * h?",
-        10: "(b + g) ** 2?",
-        11: "a - c?",
-        12: "b + c + a?",
-        13: "d + ' ' + e + ' ' + f?",
-        14: "h + a * b?",
-        15: "(h + a) * b?",
-        16: "g + a?",
-        17: "g + b + c?",
-        18: "c / b?",
-        19: "c % b?",
-        20: "a * b + c?",
-        21: "a * (b + c)?",
-        22: "h / (b + g)?",
-        23: "i + ' ' + d?",
-        24: "i + ' ' + e + ' ' + f?",
-        25: "a + b + c + d?"
+        1: { text: "a + b?", level: "easy" },
+        2: { text: "h - b?", level: "easy" },
+        3: { text: "b + g?", level: "easy" },
+        4: { text: "c + b?", level: "easy" },
+        5: { text: "a - b?", level: "easy" },
+        6: { text: "g + a?", level: "easy" },
+        7: { text: "h + g?", level: "easy" },
+        8: { text: "b + b?", level: "easy" },
+        9: { text: "c - b?", level: "easy" },
+        10: { text: "h - g?", level: "easy" },
+        11: { text: "a + g?", level: "easy" },
+        12: { text: "i + ' ' + d?", level: "easy" },
+        13: { text: "e + ' ' + f?", level: "easy" },
+        14: { text: "i + ' ' + e?", level: "easy" },
+        15: { text: "a + a?", level: "easy" },
+        16: { text: "b * c?", level: "medium" },
+        17: { text: "h / b?", level: "medium" },
+        18: { text: "h % b?", level: "medium" },
+        19: { text: "b + c + a?", level: "medium" },
+        20: { text: "c - a?", level: "medium" },
+        21: { text: "h / (b + g)?", level: "medium" },
+        22: { text: "a * b?", level: "medium" },
+        23: { text: "c * b?", level: "medium" },
+        24: { text: "h + a?", level: "medium" },
+        25: { text: "c + h?", level: "medium" },
+        26: { text: "b + g + h?", level: "medium" },
+        27: { text: "a + b + c?", level: "medium" },
+        28: { text: "h - a?", level: "medium" },
+        29: { text: "c / b?", level: "medium" },
+        30: { text: "g + h + b?", level: "medium" },
+        31: { text: "b + g * h?", level: "hard" },
+        32: { text: "(b + g) ** 2?", level: "hard" },
+        33: { text: "h + a * b?", level: "hard" },
+        34: { text: "(h + a) * b?", level: "hard" },
+        35: { text: "a * (b + c)?", level: "hard" },
+        36: { text: "h / (b + g)?", level: "hard" },
+        37: { text: "a * b + c?", level: "hard" },
+        38: { text: "c + b * h?", level: "hard" },
+        39: { text: "(h - b) * a?", level: "hard" },
+        40: { text: "(c + a) * b?", level: "hard" },
+        41: { text: "h * b + a?", level: "hard" },
+        42: { text: "a + b * c?", level: "hard" },
+        43: { text: "(a + b + c) * b?", level: "hard" },
+        44: { text: "(h / b) + c?", level: "hard" },
+        45: { text: "(h + g + a) * b?", level: "hard" },
     };
 
     // print instructions
@@ -70,7 +90,9 @@ import { writeFile, readFile } from "node:fs";
     console.log("h =", h);
     console.log("i =", i);
 
-    let questionKeys = Object.keys(questions);
+    let questionEntries = Object.entries(questions);
+    let filteredEntries = [];
+    let shuffle = [];
     let correctCount = 0;
     let incorrectCount = 0;
     let index = 0;
@@ -84,7 +106,6 @@ import { writeFile, readFile } from "node:fs";
     let currentUser;
     let scores = [];
     let highest;
-    let shuffle = shuffleQuestions(questionKeys, 10);
     let timeLeft = 10;
     let countdown;
 
@@ -179,19 +200,19 @@ import { writeFile, readFile } from "node:fs";
             // track correct answers
             correctCount++;
             // questions user got right
-            correctQuestions.push(questions[choice]);
+            correctQuestions.push(questions[choice].text);
         } else {
             console.log(chalk.red("✖") + ` Incorrect. Correct answer: ${correctAnswer}`);
             // track incorrect answers
             incorrectCount++;
             // questions user got wrong
-            incorrectQuestions.push(questions[choice]);
+            incorrectQuestions.push(questions[choice].text);
         }
     }
 
     // randomly shuffle the question array and returns the first 'num' items
-    function shuffleQuestions(questionKeys, num) {
-        const shuffled = [...questionKeys].sort(() => 0.5 - Math.random());
+    function shuffleQuestions(entries, num) {
+        const shuffled = [...entries].sort(() => 0.5 - Math.random());
         return shuffled.slice(0, num);
     }
 
@@ -201,7 +222,7 @@ import { writeFile, readFile } from "node:fs";
         incorrectCount = 0;
         index = 0;
         answered = false;
-        shuffle = shuffleQuestions(questionKeys, 10);
+        shuffle = shuffleQuestions(filteredEntries, 10);
 
         // clear timers
         clearTimeout(timer);
@@ -241,7 +262,7 @@ import { writeFile, readFile } from "node:fs";
                 readLine.question("\nDo you wish to play again? (Type 'yes', 'y' or 'no', 'n'). \n", function (replayAnswer) {
                     if (replayAnswer.toLowerCase() === 'yes' || replayAnswer.toLowerCase() === 'y') {
                         resetGame();
-                        askQuestions();
+                        startGame();
                     } else {
                         readLine.close();
                     }
@@ -257,19 +278,14 @@ import { writeFile, readFile } from "node:fs";
         // clear any previous countdown
         clearInterval(countdown);
 
-        let questionByKey = shuffle[index];
+        let [questionKey, questionObj] = shuffle[index];
         index++;
 
-        currentQuestion = questionByKey;
+        currentQuestion = questionKey;
         answered = false;
 
-        process.stdout.write(`\nWhat is ${questions[questionByKey]} `);
+        process.stdout.write(`\nWhat is ${questionObj.text} `);
         console.log("");
-
-        // start 5s timer
-        // warningTimer = setTimeout(() => {
-        //     console.log("\n" + chalk.red("You have 5 seconds left!"));
-        // }, 5000);
 
         countdown = setInterval(() => {
             process.stdout.write(`\rTime left: ${chalk.red(timeLeft + "s")}   `);
@@ -284,7 +300,7 @@ import { writeFile, readFile } from "node:fs";
                     console.log("Time's up!");
 
                     incorrectCount++;
-                    incorrectQuestions.push(questions[questionByKey]);
+                    incorrectQuestions.push(questionObj.text);
 
                     setTimeout(() => {
                         askQuestions();
@@ -292,21 +308,6 @@ import { writeFile, readFile } from "node:fs";
                 }
             }
         }, 1000);
-
-        // start 10s timer
-        // timer = setTimeout(() => {
-        //     if (!answered) {
-        //         answered = true;
-        //         console.log("Time's up!");
-
-        //         incorrectCount++;
-        //         incorrectQuestions.push(questions[questionByKey]);
-
-        //         setTimeout(() => {
-        //             askQuestions();
-        //         }, 1500);
-        //     }
-        // }, 10000);
     }
 
     // save user score
@@ -345,6 +346,31 @@ import { writeFile, readFile } from "node:fs";
         });
     }
 
+    // ask difficulty question
+    function startGame() {
+        let level = readLine.question("Choose difficulty (easy, medium, hard): ", function (level) {
+
+            level = level.toLowerCase().trim();
+
+            if (!["easy", "medium", "hard"].includes(level)) {
+                console.log("Invalid choice. Defaulting to easy.");
+                level = "easy";
+            }
+
+            filteredEntries = questionEntries.filter(([key, question]) => {
+                return question.level === level;
+            });
+
+            shuffle = shuffleQuestions(filteredEntries, 10);
+            
+            console.log(`\nStarting ${level.toUpperCase()} mode...\n`);
+
+            setTimeout(() => {
+                askQuestions();
+            }, 1000);
+        });
+    }
+
     // loop through questions & listen for user input
     readLine.on("line", (givenAnswer) => {
         if (answered) return;
@@ -375,10 +401,11 @@ import { writeFile, readFile } from "node:fs";
 
                 console.log("\nWelcome " + currentUser);
 
-                askQuestions();
+                startGame();
             });
         } else {
             readLine.close();
         }
+
     });
 })();
