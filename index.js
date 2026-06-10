@@ -108,6 +108,8 @@ import { writeFile, readFile } from "node:fs";
     let highest;
     let timeLeft = 10;
     let countdown;
+    let streak = 0;
+    let highStreak = 0;
 
 
     function getAnswer(choice, answer) {
@@ -118,76 +120,136 @@ import { writeFile, readFile } from "node:fs";
                 correctAnswer = a + b;
                 break;
             case 2:
-                correctAnswer = Number(b * c);
+                correctAnswer = Number(h - b);
                 break;
             case 3:
-                correctAnswer = h - a;
+                correctAnswer = Number(b + g);
                 break;
             case 4:
-                correctAnswer = Number(c ** 2);
+                correctAnswer = c + b;
                 break;
             case 5:
-                correctAnswer = Number(h / b);
+                correctAnswer = Number(a - b);
                 break;
             case 6:
-                correctAnswer = Number(h % b);
-                break;
-            case 7:
-                correctAnswer = a + d;
-                break;
-            case 8:
-                correctAnswer = e + ' ' + f;
-                break;
-            case 9:
-                correctAnswer = Number(b + g * h);
-                break;
-            case 10:
-                correctAnswer = Number((b + g) ** 2);
-                break;
-            case 11:
-                correctAnswer = a - c;
-                break;
-            case 12:
-                correctAnswer = b + c + a;
-                break;
-            case 13:
-                correctAnswer = d + ' ' + e + ' ' + f;
-                break;
-            case 14:
-                correctAnswer = h + a * b;
-                break;
-            case 15:
-                correctAnswer = (h + a) * b;
-                break;
-            case 16:
                 correctAnswer = g + a;
                 break;
-            case 17:
-                correctAnswer = g + b + c;
+            case 7:
+                correctAnswer = Number(h + g);
                 break;
-            case 18:
-                correctAnswer = c / b;
+            case 8:
+                correctAnswer = Number(b + b);
                 break;
-            case 19:
-                correctAnswer = c % b;
+            case 9:
+                correctAnswer = Number(c - b);
                 break;
-            case 20:
-                correctAnswer = a * b + c;
+            case 10:
+                correctAnswer = Number(h - g);
                 break;
-            case 21:
-                correctAnswer = a * (b + c);
+            case 11:
+                correctAnswer = a + g;
                 break;
-            case 22:
-                correctAnswer = Number(h / (b + g));
-                break;
-            case 23:
+            case 12:
                 correctAnswer = i + ' ' + d;
                 break;
+            case 13:
+                correctAnswer = e + ' ' + f;
+                break;
+            case 14:
+                correctAnswer = i + ' ' + e;
+                break;
+            case 15:
+                correctAnswer = a + a;
+                break;
+            case 16:
+                correctAnswer = Number(b * c);
+                break;
+            case 17:
+                correctAnswer = Number(h / b);
+                break;
+            case 18:
+                correctAnswer = Number(h % b);
+                break;
+            case 19:
+                correctAnswer = b + c + a;
+                break;
+            case 20:
+                correctAnswer = Number(c - a);
+                break;
+            case 21:
+                correctAnswer = Number(h / (b + g));
+                break;
+            case 22:
+                correctAnswer = Number(a * b);
+                break;
+            case 23:
+                correctAnswer = Number(c * b);
+                break;
             case 24:
-                correctAnswer = i + ' ' + e + ' ' + f;
+                correctAnswer = h + a;
                 break;
             case 25:
-                correctAnswer = a + b + c + d;
+                correctAnswer = c + h;
+                break;
+            case 26:
+                correctAnswer = Number(b + g + h);
+                break;
+            case 27:
+                correctAnswer = a + b + c;
+                break;
+            case 28:
+                correctAnswer = Number(h - a);
+                break;
+            case 29:
+                correctAnswer = Number(c / b);
+                break;
+            case 30:
+                correctAnswer = Number(g + h + b);
+                break;
+            case 31:
+                correctAnswer = Number(b + g * h);
+                break;
+            case 32:
+                correctAnswer = Number((b + g) ** 2);
+                break;
+            case 33:
+                correctAnswer = Number(h + a * b);
+                break;
+            case 34:
+                correctAnswer = Number((h + a) * b);
+                break;
+            case 35:
+                correctAnswer = Number(a * (b + c));
+                break;
+            case 36:
+                correctAnswer = Number(h / (b + g));
+                break;
+            case 37:
+                correctAnswer = a * b + c;
+                break;
+            case 38:
+                correctAnswer = c + b * h;
+                break;
+            case 39:
+                correctAnswer = Number((h - b) * a);
+                break;
+            case 40:
+                correctAnswer = Number((c + a) * b);
+                break;
+            case 41:
+                correctAnswer = h * b + a;
+                break;
+            case 42:
+                correctAnswer = a + b * c;
+                break;
+            case 43:
+                correctAnswer = Number((a + b + c) * b);
+                break;
+            case 44:
+                correctAnswer = (h / b) + c;
+                break;
+            case 45:
+                correctAnswer = Number((h + g + a) * b);
                 break;
             default:
                 console.log("Oops.");
@@ -197,14 +259,28 @@ import { writeFile, readFile } from "node:fs";
 
         if (answer === correctAnswer) {
             console.log(chalk.green("✔") + " Correct.");
+
             // track correct answers
             correctCount++;
+
+            // track streak 
+            streak++;
+
+            if (streak > highStreak) {
+                highStreak = streak;
+                console.log(chalk.yellow(`New High Streak: ${highStreak}`));
+            }
+
             // questions user got right
             correctQuestions.push(questions[choice].text);
         } else {
             console.log(chalk.red("✖") + ` Incorrect. Correct answer: ${correctAnswer}`);
+
             // track incorrect answers
             incorrectCount++;
+
+            streak = 0;
+
             // questions user got wrong
             incorrectQuestions.push(questions[choice].text);
         }
@@ -258,7 +334,7 @@ import { writeFile, readFile } from "node:fs";
             console.log("\nIncorrect Questions:");
             console.log(incorrectQuestions);
 
-            saveScore(currentUser, correctCount, () => {
+            saveScore(currentUser, correctCount, highStreak, () => {
                 readLine.question("\nDo you wish to play again? (Type 'yes', 'y' or 'no', 'n'). \n", function (replayAnswer) {
                     if (replayAnswer.toLowerCase() === 'yes' || replayAnswer.toLowerCase() === 'y') {
                         resetGame();
@@ -311,7 +387,7 @@ import { writeFile, readFile } from "node:fs";
     }
 
     // save user score
-    function saveScore(user, score, callback) {
+    function saveScore(user, score, highStreak, callback) {
 
         readFile(path, "utf-8", (err, data) => {
 
@@ -325,7 +401,7 @@ import { writeFile, readFile } from "node:fs";
             }
 
             // add new score
-            scores.push({ user, score });
+            scores.push({ user, score, highStreak });
 
             writeFile(path, JSON.stringify(scores, null, 2), (err) => {
                 if (err) throw err;
@@ -339,7 +415,7 @@ import { writeFile, readFile } from "node:fs";
                     }
                 });
 
-                console.log(`\nHighest Score is ${highest.user} : ${highest.score}`);
+                console.log(`\nHighest Score is ${highest.user} : ${highest.score}: ${highest.highStreak}`);
 
                 callback();
             })
@@ -362,7 +438,7 @@ import { writeFile, readFile } from "node:fs";
             });
 
             shuffle = shuffleQuestions(filteredEntries, 10);
-            
+
             console.log(`\nStarting ${level.toUpperCase()} mode...\n`);
 
             setTimeout(() => {

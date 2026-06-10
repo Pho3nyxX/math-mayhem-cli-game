@@ -1,10 +1,7 @@
 [
   {
-    "user": "tom",
-    "score": 2
-  },
-  {
     "user": "joe",
-    "score": 1
+    "score": 4,
+    "highStreak": 1
   }
 ]
