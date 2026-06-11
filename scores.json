@@ -3,5 +3,35 @@
     "user": "joe",
     "score": 4,
     "highStreak": 1
+  },
+  {
+    "user": "sally",
+    "score": 3,
+    "highStreak": 2
+  },
+  {
+    "user": "john",
+    "score": 1,
+    "highStreak": 1
+  },
+  {
+    "user": "trish",
+    "score": 6,
+    "highStreak": 1
+  },
+  {
+    "user": "billy",
+    "score": 8,
+    "highStreak": 1
+  },
+  {
+    "user": "gladis",
+    "score": 4,
+    "highStreak": 4
+  },
+  {
+    "user": "evans",
+    "score": 4,
+    "highStreak": 2
   }
 ]

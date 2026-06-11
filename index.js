@@ -110,6 +110,7 @@ import { writeFile, readFile } from "node:fs";
     let countdown;
     let streak = 0;
     let highStreak = 0;
+    let top5;
 
 
     function getAnswer(choice, answer) {
@@ -297,6 +298,7 @@ import { writeFile, readFile } from "node:fs";
         correctCount = 0;
         incorrectCount = 0;
         index = 0;
+        highStreak = 0;
         answered = false;
         shuffle = shuffleQuestions(filteredEntries, 10);
 
@@ -335,6 +337,15 @@ import { writeFile, readFile } from "node:fs";
             console.log(incorrectQuestions);
 
             saveScore(currentUser, correctCount, highStreak, () => {
+                // leaderboard
+                scores.sort((a, b) => b.score - a.score);
+                top5 = scores.slice(0, 5);
+    
+                console.log("\nLeaderboard:");
+                top5.forEach((rank, i) => {
+                    console.log(`${i + 1}. ${rank.user}: ${rank.score}`);
+                })
+
                 readLine.question("\nDo you wish to play again? (Type 'yes', 'y' or 'no', 'n'). \n", function (replayAnswer) {
                     if (replayAnswer.toLowerCase() === 'yes' || replayAnswer.toLowerCase() === 'y') {
                         resetGame();
@@ -344,6 +355,7 @@ import { writeFile, readFile } from "node:fs";
                     }
                 });
             });
+
 
             return;
         }
