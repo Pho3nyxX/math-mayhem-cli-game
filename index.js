@@ -134,7 +134,7 @@ import { writeFile, readFile } from "node:fs";
     let currentUser;
     let scores = [];
     let highest;
-    let timeLeft = 10;
+    let timeLeft = 0;
     let countdown;
     let streak = 0;
     let highStreak = 0;
@@ -146,6 +146,26 @@ import { writeFile, readFile } from "node:fs";
     let currentDifficulty = "easy";
     let totalAsked = 0;
     const maxQuestions = 20;
+
+    let baseTime = 30;
+    let timeDecrease = {
+        easy: 1,
+        medium: 2,
+        hard: 3
+    };
+
+    let correct = {
+        easy: 0,
+        medium: 0,
+        hard: 0
+    };
+
+    function updateTime() {
+        return baseTime
+            - (correct.easy * timeDecrease.easy)
+            - (correct.medium * timeDecrease.medium)
+            - (correct.hard * timeDecrease.hard);
+    }
 
     function getAnswer(choice, answer) {
         let correctAnswer;
@@ -388,6 +408,9 @@ import { writeFile, readFile } from "node:fs";
             // track correct answers
             correctCount++;
 
+            // track correct answers per difficulty
+            correct[currentDifficulty]++;
+
             // track streak 
             streak++;
 
@@ -426,6 +449,12 @@ import { writeFile, readFile } from "node:fs";
         highStreak = 0;
         streak = 0;
         answered = false;
+
+        correct = {
+            easy: 0,
+            medium: 0,
+            hard: 0
+        };
 
         // clear timers
         clearTimeout(timer);
@@ -484,8 +513,11 @@ import { writeFile, readFile } from "node:fs";
             return;
         }
 
-        // reset timer for each question
-        timeLeft = 10;
+        // update timer
+        timeLeft = updateTime();
+
+        // prevent negative timer
+        timeLeft = Math.max(3, timeLeft);
 
         // clear any previous countdown
         clearInterval(countdown);
