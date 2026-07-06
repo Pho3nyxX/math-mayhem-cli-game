@@ -150,7 +150,6 @@ import { scoreTiers } from "./scoreTiers.js";
     console.log("i =", i);
 
     let questionEntries = Object.entries(questions);
-    let filteredEntries = [];
     let correctCount = 0;
     let incorrectCount = 0;
     let timer;
@@ -360,27 +359,55 @@ import { scoreTiers } from "./scoreTiers.js";
         process.stdout.write(`What is ${questionObj.text} `);
         console.log("");
 
+        clearInterval(countdown);
+        clearTimeout(timer);
+        clearTimeout(warningTimer);
+
+        // ui countdown
         countdown = setInterval(() => {
-            process.stdout.write(`\rTime left: ${chalk.red(timeLeft + "s")}   `);
+            process.stdout.write(`\rTime left: ${chalk.red(`${timeLeft}s`)}   `);
 
             timeLeft--;
 
-            if (timeLeft < 0) {
+            if (timeLeft <= 0) {
                 clearInterval(countdown);
-
-                if (!answered) {
-                    answered = true;
-                    console.log("Time's up!");
-
-                    incorrectCount++;
-                    incorrectQuestions.push(questionObj.text);
-
-                    setTimeout(() => {
-                        askQuestions();
-                    }, 1500);
-                }
             }
         }, 1000);
+
+        // warning timer 
+        if (timeLeft > 5) {
+            warningTimer = setTimeout(() => {
+                let timerText = `Time left: ${timeLeft}s`;
+                let warningText = "5 seconds left!";
+
+                let width = process.stdout.columns;
+
+                // space between left and right text
+                let space = Math.max(1, width - (timerText.length + warningText.length));
+
+                process.stdout.write(
+                    `\r${chalk.red(timerText)}${" ".repeat(space)}${chalk.yellow(warningText)}`
+                );
+            }, (timeLeft - 5) * 1000);
+        }
+
+        // main timer (end question)
+        timer = setTimeout(() => {
+            if (!answered) {
+                answered = true;
+
+                clearInterval(countdown);
+
+                console.log(chalk.red("\n Time's up!"));
+
+                incorrectCount++;
+                incorrectQuestions.push(questionObj.text);
+
+                setTimeout(() => {
+                    askQuestions();
+                }, 1500);
+            }
+        }, timeLeft * 1000);
     }
 
     // save user score
@@ -429,7 +456,7 @@ import { scoreTiers } from "./scoreTiers.js";
 
     // ask difficulty question
     function startGame() {
-        let level = readLine.question("Choose difficulty (easy, medium, hard): ", function (level) {
+        readLine.question("Choose difficulty (easy, medium, hard): ", function (level) {
 
             level = level.toLowerCase().trim();
 
