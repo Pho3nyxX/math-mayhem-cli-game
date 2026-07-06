@@ -166,14 +166,9 @@ import { scoreTiers } from "./scoreTiers.js";
     let streak = 0;
     let highStreak = 0;
     let top5;
-
-    let easyQuestion = questionEntries.filter(([key, question]) => question.level === "easy");
-    let mediumQuestion = questionEntries.filter(([key, question]) => question.level === "medium");
-    let hardQuestion = questionEntries.filter(([key, question]) => question.level === "hard");
     let currentDifficulty = "easy";
     let totalAsked = 0;
     const maxQuestions = 20;
-
     let baseTime = 50;
     let timeDecrease = {
         easy: 1,
@@ -185,10 +180,22 @@ import { scoreTiers } from "./scoreTiers.js";
         medium: 0,
         hard: 0
     };
-
     let score;
     let tier;
     let wrongStreak = 0;
+    let easyQuestion = [];
+    let mediumQuestion = [];
+    let hardQuestion = [];
+
+    for (const [key, question] of questionEntries) {
+        if (question.level === "easy") {
+            easyQuestion.push([key, question]);
+        } else if (question.level === "medium") {
+            mediumQuestion.push([key, question]);
+        } else if (question.level === "hard") {
+            hardQuestion.push([key, question]);
+        }
+    }
 
     // adaptive timer adjustment
     function updateTime() {
