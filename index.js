@@ -102,12 +102,38 @@ import { scoreTiers } from "./scoreTiers.js";
     };
 
     // print instructions
-    console.log('----------------------------------------------------------------------------------');
-    console.log('Welcome to Math Mayhem');
-    console.log('You will be given 20 questions.');
-    console.log('You have 10 seconds per question.');
-    console.log('15 and above pass. 14 and below fail.');
-    console.log('---------------------------------------------------------------------------------- \n');
+    console.log(chalk.yellow('\n=================================================================================='));
+    console.log(chalk.green.bold('🎮  WELCOME TO MATH MAYHEM  🎮'));
+    console.log(chalk.yellow('==================================================================================\n'));
+
+    console.log(chalk.white('Get ready to test your speed, accuracy, and brain power!\n'));
+
+    console.log(chalk.cyan('GAME RULES:'));
+    console.log(chalk.white('• You will be given ') + chalk.green.bold('20 questions'));
+    console.log(chalk.white('• Try to answer each question before time runs out'));
+    console.log(chalk.white('• Score ') + chalk.green.bold('15 or higher') + chalk.white(' to PASS'));
+    console.log(chalk.white('• Score ') + chalk.red.bold('14 or lower') + chalk.white(' to FAIL\n'));
+
+    console.log(chalk.cyan('TIMER SYSTEM:'));
+    console.log(chalk.white('• You start with ') + chalk.green.bold('50 seconds'));
+    console.log(chalk.white('• Each correct answer ') + chalk.green.bold('REDUCES your time'));
+    console.log(chalk.white('• The better you perform, the faster the game becomes!\n'));
+
+    console.log(chalk.cyan('ADAPTIVE DIFFICULTY:'));
+    console.log(chalk.white('• Get ') + chalk.green.bold('3 correct answers in a row') + chalk.white(' → Difficulty increases'));
+    console.log(chalk.white('   EASY → MEDIUM → HARD'));
+    console.log('');
+    console.log(chalk.white('• Get ') + chalk.red.bold('2 wrong answers') + chalk.white(' → Difficulty decreases'));
+    console.log(chalk.white('   HARD → MEDIUM → EASY\n'));
+
+    console.log(chalk.cyan('DIFFICULTY BREAKDOWN:'));
+    console.log(chalk.green('• EASY: ') + chalk.white('Simple arithmetic'));
+    console.log(chalk.blue('• MEDIUM: ') + chalk.white('Mixed problems'));
+    console.log(chalk.red('• HARD: ') + chalk.white('Complex / nested expressions\n'));
+
+    console.log(chalk.magenta.bold('Stay sharp. Think fast. Adapt quickly.\n'));
+
+    console.log(chalk.yellow('==================================================================================\n'));
 
     // show variable and value
     console.log("Variables and Values:");
