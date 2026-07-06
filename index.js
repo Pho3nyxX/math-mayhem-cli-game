@@ -1,6 +1,7 @@
 import readline from "readline";
 import chalk from "chalk";
 import { writeFile, readFile } from "node:fs";
+import { scoreTiers } from "./scoreTiers.js";
 
 
 (function () {
@@ -147,24 +148,34 @@ import { writeFile, readFile } from "node:fs";
     let totalAsked = 0;
     const maxQuestions = 20;
 
-    let baseTime = 30;
+    let baseTime = 50;
     let timeDecrease = {
         easy: 1,
         medium: 2,
         hard: 3
     };
-
     let correct = {
         easy: 0,
         medium: 0,
         hard: 0
     };
 
+    let score;
+    let tier;
+    let wrongStreak = 0;
+
+    // adaptive timer adjustment
     function updateTime() {
         return baseTime
             - (correct.easy * timeDecrease.easy)
             - (correct.medium * timeDecrease.medium)
             - (correct.hard * timeDecrease.hard);
+    }
+
+    function getTier(score) {
+        return scoreTiers.find(
+            tier => score >= tier.min && score <= tier.max
+        );
     }
 
     function getAnswer(choice, answer) {
@@ -414,6 +425,9 @@ import { writeFile, readFile } from "node:fs";
             // track streak 
             streak++;
 
+            // reset when answer is correct
+            wrongStreak = 0;
+
             if (streak > highStreak) {
                 highStreak = streak;
                 console.log(chalk.yellow(`New High Streak: ${highStreak}`));
@@ -427,7 +441,11 @@ import { writeFile, readFile } from "node:fs";
             // track incorrect answers
             incorrectCount++;
 
+            // reset streak
             streak = 0;
+
+            // increase when user answer is wrong
+            wrongStreak++;
 
             // questions user got wrong
             incorrectQuestions.push(questions[choice].text);
@@ -484,13 +502,19 @@ import { writeFile, readFile } from "node:fs";
                 console.log("I'm Sorry! You Failed!");
             }
 
+            score = correctCount;
+            tier = getTier(score);
+
+            console.log(`${tier.label} ${tier.emoji}`);
+            console.log(tier.description);
+
             console.log("\nCorrect Questions:");
             console.log(correctQuestions);
 
             console.log("\nIncorrect Questions:");
             console.log(incorrectQuestions);
 
-            saveScore(currentUser, correctCount, highStreak, () => {
+            saveScore(currentUser, correctCount, highStreak, tier.label, () => {
                 // leaderboard
                 scores.sort((a, b) => b.score - a.score);
                 top5 = scores.slice(0, 5);
@@ -524,6 +548,9 @@ import { writeFile, readFile } from "node:fs";
 
         let [questionKey, questionObj] = getNextQuestion();
 
+        // increment questions asked
+        totalAsked++;
+
         currentQuestion = questionKey;
         answered = false;
 
@@ -554,7 +581,7 @@ import { writeFile, readFile } from "node:fs";
     }
 
     // save user score
-    function saveScore(user, score, highStreak, callback) {
+    function saveScore(user, score, highStreak, label, callback) {
 
         readFile(path, "utf-8", (err, data) => {
 
@@ -568,7 +595,7 @@ import { writeFile, readFile } from "node:fs";
             }
 
             // add new score
-            scores.push({ user, score, highStreak });
+            scores.push({ user, score, highStreak, label });
 
             writeFile(path, JSON.stringify(scores, null, 2), (err) => {
                 if (err) throw err;
@@ -582,7 +609,15 @@ import { writeFile, readFile } from "node:fs";
                     }
                 });
 
-                console.log(`\nHighest Score is ${highest.user} : ${highest.score}: ${highest.highStreak}`);
+                console.log(`
+                    ========================
+                    🏆 HIGHEST SCORE
+                    ========================
+                    User: ${highest.user}
+                    Score: ${highest.score}
+                    Best Streak: ${highest.highStreak}
+                    ========================
+                `);
 
                 callback();
             })
@@ -664,15 +699,20 @@ import { writeFile, readFile } from "node:fs";
         }
 
         // decrease difficulty if struggling
-        if (incorrectCount >= 2) {
-            if (currentDifficulty === "hard") {
-                currentDifficulty = "medium";
-                console.log(chalk.magenta("\nDifficulty decreased to MEDIUM"));
-            } else if (currentDifficulty === "medium") {
-                currentDifficulty = "easy";
-                console.log(chalk.magenta("\nDifficulty decreased to EASY"));
+        if (wrongStreak >= 2) {
+            if ((currentDifficulty === "hard" && wrongStreak >= 3) ||
+                (currentDifficulty === "medium" && wrongStreak >= 2)
+            ) {
+                if (currentDifficulty === "hard") {
+                    currentDifficulty = "medium";
+                    console.log(chalk.magenta("\nDifficulty decreased to MEDIUM"));
+                } else if (currentDifficulty === "medium") {
+                    currentDifficulty = "easy";
+                    console.log(chalk.magenta("\nDifficulty decreased to EASY"));
+                }
+
+                wrongStreak = 0;
             }
-            incorrectCount = 0;
         }
     }
 

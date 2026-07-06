@@ -33,5 +33,11 @@
     "user": "evans",
     "score": 4,
     "highStreak": 2
+  },
+  {
+    "user": "jaxson",
+    "score": 17,
+    "highStreak": 3,
+    "label": "Advanced"
   }
 ]
