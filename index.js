@@ -22,83 +22,85 @@ import { scoreTiers } from "./scoreTiers.js";
     let h = 12;
     let i = 'the';
 
-    // question list
+    // questions and answers list
     const questions = {
-        1: { text: "a + b?", level: "easy" },
-        2: { text: "h - b?", level: "easy" },
-        3: { text: "b + g?", level: "easy" },
-        4: { text: "c + b?", level: "easy" },
-        5: { text: "a - b?", level: "easy" },
-        6: { text: "g + a?", level: "easy" },
-        7: { text: "h + g?", level: "easy" },
-        8: { text: "b + b?", level: "easy" },
-        9: { text: "c - b?", level: "easy" },
-        10: { text: "h - g?", level: "easy" },
-        11: { text: "a + g?", level: "easy" },
-        12: { text: "i + d?", level: "easy" },
-        13: { text: "e + f?", level: "easy" },
-        14: { text: "i + e?", level: "easy" },
-        15: { text: "a + a?", level: "easy" },
-        16: { text: "b * c?", level: "easy" },
-        17: { text: "h / b?", level: "easy" },
-        18: { text: "h % b?", level: "easy" },
-        19: { text: "c - a?", level: "easy" },
-        20: { text: "a * b?", level: "easy" },
-        21: { text: "c * b?", level: "easy" },
-        22: { text: "h + a?", level: "easy" },
-        23: { text: "c + h?", level: "easy" },
-        24: { text: "h - a?", level: "easy" },
-        25: { text: "c / b?", level: "easy" },
-        26: { text: "b + c + a?", level: "medium" },
-        27: { text: "h / (b + g)?", level: "medium" },
-        28: { text: "b + g + h?", level: "medium" },
-        29: { text: "a + b + c?", level: "medium" },
-        30: { text: "g + h + b?", level: "medium" },
-        31: { text: "b + g * h?", level: "medium" },
-        32: { text: "h + a * b?", level: "medium" },
-        33: { text: "(h + a) * b?", level: "medium" },
-        34: { text: "a * b + c?", level: "medium" },
-        35: { text: "c + b * h?", level: "medium" },
-        36: { text: "h * b + a?", level: "medium" },
-        37: { text: "a + b * c?", level: "medium" },
-        38: { text: "(h / b) + c?", level: "medium" },
-        39: { text: "(h + g + a) * b?", level: "medium" },
-        40: { text: "b * h + g?", level: "medium" },
-        41: { text: "h - b + g?", level: "medium" },
-        42: { text: "b * (g + h)?", level: "medium" },
-        43: { text: "h % b + g?", level: "medium" },
-        44: { text: "b + c * g?", level: "medium" },
-        45: { text: "(h - b) + g?", level: "medium" },
-        46: { text: "b ** 2 + g?", level: "medium" },
-        47: { text: "h / b + g?", level: "medium" },
-        48: { text: "i + ' ' + d?", level: "medium" },
-        49: { text: "e + ' ' + f?", level: "medium" },
-        50: { text: "i + ' ' + e?", level: "medium" },
-        51: { text: "(b + g) ** 2?", level: "hard" },
-        52: { text: "a * (b + c)?", level: "hard" },
-        53: { text: "(h - b) * a?", level: "hard" },
-        54: { text: "(c + a) * b?", level: "hard" },
-        55: { text: "(a + b + c) * b?", level: "hard" },
-        56: { text: "(h + g + a) * b?", level: "hard" },
-        57: { text: "b + g * h ** 2?", level: "hard" },
-        58: { text: "(b + g * h) ** 2?", level: "hard" },
-        59: { text: "h ** 2 + b * g?", level: "hard" },
-        60: { text: "(h + b) ** 2?", level: "hard" },
-        61: { text: "b * h ** g?", level: "hard" },
-        62: { text: "(h - b) ** 2?", level: "hard" },
-        63: { text: "h ** (b % 3)?", level: "hard" },
-        64: { text: "(b + g + h) ** 2?", level: "hard" },
-        65: { text: "b * (h % 5) + g?", level: "hard" },
-        66: { text: "(h ** 2) % b?", level: "hard" },
-        67: { text: "(b + g * h) % b?", level: "hard" },
-        68: { text: "(h + b * g) ** 2?", level: "hard" },
-        69: { text: "h ** 2 + b ** 2?", level: "hard" },
-        70: { text: "(b * h + g) % h?", level: "hard" },
-        71: { text: "(h + b) * (g + 1)?", level: "hard" },
-        72: { text: "(b + g) * (h % 5)?", level: "hard" },
-        73: { text: "(h ** 2 + b) % g?", level: "hard" },
-        74: { text: "(b * h) ** 2?", level: "hard" },
-        75: { text: "(h + b * g) % 7?", level: "hard" },
+        1: { text: "a + b?", level: "easy", answer: () => Number(a + b) },
+        2: { text: "h - b?", level: "easy", answer: () => Number(h - b) },
+        3: { text: "b + g?", level: "easy", answer: () => Number(b + g) },
+        4: { text: "c + b?", level: "easy", answer: () => Number(c + b) },
+        5: { text: "a - b?", level: "easy", answer: () => Number(a - b) },
+        6: { text: "g + a?", level: "easy", answer: () => Number(g + a) },
+        7: { text: "h + g?", level: "easy", answer: () => Number(h + g) },
+        8: { text: "b + b?", level: "easy", answer: () => Number(b + b) },
+        9: { text: "c - b?", level: "easy", answer: () => Number(c - b) },
+        10: { text: "h - g?", level: "easy", answer: () => Number(h - g) },
+        11: { text: "a + g?", level: "easy", answer: () => Number(a + g) },
+        12: { text: "i + d?", level: "easy", answer: () => i + d },
+        13: { text: "e + f?", level: "easy", answer: () => e + f },
+        14: { text: "i + e?", level: "easy", answer: () => i + e },
+        15: { text: "a + a?", level: "easy", answer: () => Number(a + a) },
+        16: { text: "b * c?", level: "easy", answer: () => Number(b * c) },
+        17: { text: "h / b?", level: "easy", answer: () => Number(h / b) },
+        18: { text: "h % b?", level: "easy", answer: () => Number(h % b) },
+        19: { text: "c - a?", level: "easy", answer: () => Number(c - a) },
+        20: { text: "a * b?", level: "easy", answer: () => Number(a * b) },
+        21: { text: "c * b?", level: "easy", answer: () => Number(c * b) },
+        22: { text: "h + a?", level: "easy", answer: () => Number(h + a) },
+        23: { text: "c + h?", level: "easy", answer: () => Number(c + h) },
+        24: { text: "h - a?", level: "easy", answer: () => Number(h - a) },
+        25: { text: "c / b?", level: "easy", answer: () => Number(c / b) },
+
+        26: { text: "b + c + a?", level: "medium", answer: () => Number(b + c + a) },
+        27: { text: "h / (b + g)?", level: "medium", answer: () => Number(h / (b + g)) },
+        28: { text: "b + g + h?", level: "medium", answer: () => Number(b + g + h) },
+        29: { text: "a + b + c?", level: "medium", answer: () => Number(a + b + c) },
+        30: { text: "g + h + b?", level: "medium", answer: () => Number(g + h + b) },
+        31: { text: "b + g * h?", level: "medium", answer: () => Number(b + g * h) },
+        32: { text: "h + a * b?", level: "medium", answer: () => Number(h + a * b) },
+        33: { text: "(h + a) * b?", level: "medium", answer: () => Number((h + a) * b) },
+        34: { text: "a * b + c?", level: "medium", answer: () => Number(a * b + c) },
+        35: { text: "c + b * h?", level: "medium", answer: () => Number(c + b * h) },
+        36: { text: "h * b + a?", level: "medium", answer: () => Number(h * b + a) },
+        37: { text: "a + b * c?", level: "medium", answer: () => Number(a + b * c) },
+        38: { text: "(h / b) + c?", level: "medium", answer: () => Number((h / b) + c) },
+        39: { text: "(h + g + a) * b?", level: "medium", answer: () => Number((h + g + a) * b) },
+        40: { text: "b * h + g?", level: "medium", answer: () => Number(b * h + g) },
+        41: { text: "h - b + g?", level: "medium", answer: () => Number(h - b + g) },
+        42: { text: "b * (g + h)?", level: "medium", answer: () => Number(b * (g + h)) },
+        43: { text: "h % b + g?", level: "medium", answer: () => Number(h % b + g) },
+        44: { text: "b + c * g?", level: "medium", answer: () => Number(b + c * g) },
+        45: { text: "(h - b) + g?", level: "medium", answer: () => Number((h - b) + g) },
+        46: { text: "b ** 2 + g?", level: "medium", answer: () => Number(b ** 2 + g) },
+        47: { text: "h / b + g?", level: "medium", answer: () => Number(h / b + g) },
+        48: { text: "i + ' ' + d?", level: "medium", answer: () => i + ' ' + d },
+        49: { text: "e + ' ' + f?", level: "medium", answer: () => e + ' ' + f },
+        50: { text: "i + ' ' + e?", level: "medium", answer: () => i + ' ' + e },
+
+        51: { text: "(b + g) ** 2?", level: "hard", answer: () => Number((b + g) ** 2) },
+        52: { text: "a * (b + c)?", level: "hard", answer: () => Number(a * (b + c)) },
+        53: { text: "(h - b) * a?", level: "hard", answer: () => Number((h - b) * a) },
+        54: { text: "(c + a) * b?", level: "hard", answer: () => Number((c + a) * b) },
+        55: { text: "(a + b + c) * b?", level: "hard", answer: () => Number((a + b + c) * b) },
+        56: { text: "(h + g + a) * b?", level: "hard", answer: () => Number((h + g + a) * b) },
+        57: { text: "b + g * h ** 2?", level: "hard", answer: () => Number(b + g * h ** 2) },
+        58: { text: "(b + g * h) ** 2?", level: "hard", answer: () => Number((b + g * h) ** 2) },
+        59: { text: "h ** 2 + b * g?", level: "hard", answer: () => Number(h ** 2 + b * g) },
+        60: { text: "(h + b) ** 2?", level: "hard", answer: () => Number((h + b) ** 2) },
+        61: { text: "b * h ** g?", level: "hard", answer: () => Number(b * h ** g) },
+        62: { text: "(h - b) ** 2?", level: "hard", answer: () => Number((h - b) ** 2) },
+        63: { text: "h ** (b % 3)?", level: "hard", answer: () => Number(h ** (b % 3)) },
+        64: { text: "(b + g + h) ** 2?", level: "hard", answer: () => Number((b + g + h) ** 2) },
+        65: { text: "b * (h % 5) + g?", level: "hard", answer: () => Number(b * (h % 5) + g) },
+        66: { text: "(h ** 2) % b?", level: "hard", answer: () => Number((h ** 2) % b) },
+        67: { text: "(b + g * h) % b?", level: "hard", answer: () => Number((b + g * h) % b) },
+        68: { text: "(h + b * g) ** 2?", level: "hard", answer: () => Number((h + b * g) ** 2) },
+        69: { text: "h ** 2 + b ** 2?", level: "hard", answer: () => Number(h ** 2 + b ** 2) },
+        70: { text: "(b * h + g) % h?", level: "hard", answer: () => Number((b * h + g) % h) },
+        71: { text: "(h + b) * (g + 1)?", level: "hard", answer: () => Number((h + b) * (g + 1)) },
+        72: { text: "(b + g) * (h % 5)?", level: "hard", answer: () => Number((b + g) * (h % 5)) },
+        73: { text: "(h ** 2 + b) % g?", level: "hard", answer: () => (h ** 2 + b) % g },
+        74: { text: "(b * h) ** 2?", level: "hard", answer: () => Number((b * h) ** 2) },
+        75: { text: "(h + b * g) % 7?", level: "hard", answer: () => Number((h + b * g) % 7) },
     };
 
     // print instructions
@@ -212,239 +214,7 @@ import { scoreTiers } from "./scoreTiers.js";
     }
 
     function getAnswer(choice, answer) {
-        let correctAnswer;
-
-        switch (choice) {
-            case 1:
-                correctAnswer = Number(a + b);
-                break;
-            case 2:
-                correctAnswer = Number(h - b);
-                break;
-            case 3:
-                correctAnswer = Number(b + g);
-                break;
-            case 4:
-                correctAnswer = Number(c + b);
-                break;
-            case 5:
-                correctAnswer = Number(a - b);
-                break;
-            case 6:
-                correctAnswer = Number(g + a);
-                break;
-            case 7:
-                correctAnswer = Number(h + g);
-                break;
-            case 8:
-                correctAnswer = Number(b + b);
-                break;
-            case 9:
-                correctAnswer = Number(c - b);
-                break;
-            case 10:
-                correctAnswer = Number(h - g);
-                break;
-            case 11:
-                correctAnswer = Number(a + g);
-                break;
-            case 12:
-                correctAnswer = i + d;
-                break;
-            case 13:
-                correctAnswer = e + f;
-                break;
-            case 14:
-                correctAnswer = i + e;
-                break;
-            case 15:
-                correctAnswer = Number(a + a);
-                break;
-            case 16:
-                correctAnswer = Number(b * c);
-                break;
-            case 17:
-                correctAnswer = Number(h / b);
-                break;
-            case 18:
-                correctAnswer = Number(h % b);
-                break;
-            case 19:
-                correctAnswer = Number(c - a);
-                break;
-            case 20:
-                correctAnswer = Number(a * b);
-                break;
-            case 21:
-                correctAnswer = Number(c * b);
-                break;
-            case 22:
-                correctAnswer = Number(h + a);
-                break;
-            case 23:
-                correctAnswer = Number(c + h);
-                break;
-            case 24:
-                correctAnswer = Number(h - a);
-                break;
-            case 25:
-                correctAnswer = Number(c / b);
-                break;
-            case 26:
-                correctAnswer = Number(b + c + a);
-                break;
-            case 27:
-                correctAnswer = Number(h / (b + g));
-                break;
-            case 28:
-                correctAnswer = Number(b + g + h);
-                break;
-            case 29:
-                correctAnswer = Number(a + b + c);
-                break;
-            case 30:
-                correctAnswer = Number(g + h + b);
-                break;
-            case 31:
-                correctAnswer = Number(b + g * h);
-                break;
-            case 32:
-                correctAnswer = Number(h + a * b);
-                break;
-            case 33:
-                correctAnswer = Number((h + a) * b);
-                break;
-            case 34:
-                correctAnswer = Number(a * b + c);
-                break;
-            case 35:
-                correctAnswer = Number(c + b * h);
-                break;
-            case 36:
-                correctAnswer = Number(h * b + a);
-                break;
-            case 37:
-                correctAnswer = Number(a + b * c);
-                break;
-            case 38:
-                correctAnswer = Number((h / b) + c);
-                break;
-            case 39:
-                correctAnswer = Number((h + g + a) * b);
-                break;
-            case 40:
-                correctAnswer = Number(b * h + g);
-                break;
-            case 41:
-                correctAnswer = Number(h - b + g);
-                break;
-            case 42:
-                correctAnswer = Number(b * (g + h));
-                break;
-            case 43:
-                correctAnswer = Number(h % b + g);
-                break;
-            case 44:
-                correctAnswer = Number(b + c * g);
-                break;
-            case 45:
-                correctAnswer = Number((h - b) + g);
-                break;
-            case 46:
-                correctAnswer = Number(b ** 2 + g);
-                break;
-            case 47:
-                correctAnswer = Number(h / b + g);
-                break;
-            case 48:
-                correctAnswer = i + ' ' + d;
-                break;
-            case 49:
-                correctAnswer = e + ' ' + f;
-                break;
-            case 50:
-                correctAnswer = i + ' ' + e;
-                break;
-            case 51:
-                correctAnswer = Number((b + g) ** 2);
-                break;
-            case 52:
-                correctAnswer = Number(a * (b + c));
-                break;
-            case 53:
-                correctAnswer = Number((h - b) * a);
-                break;
-            case 54:
-                correctAnswer = Number((c + a) * b);
-                break;
-            case 55:
-                correctAnswer = Number((a + b + c) * b);
-                break;
-            case 56:
-                correctAnswer = Number((h + g + a) * b);
-                break;
-            case 57:
-                correctAnswer = Number(b + g * h ** 2);
-                break;
-            case 58:
-                correctAnswer = Number((b + g * h) ** 2);
-                break;
-            case 59:
-                correctAnswer = Number(h ** 2 + b * g);
-                break;
-            case 60:
-                correctAnswer = Number((h + b) ** 2);
-                break;
-            case 61:
-                correctAnswer = Number(b * h ** g);
-                break;
-            case 62:
-                correctAnswer = Number((h - b) ** 2);
-                break;
-            case 63:
-                correctAnswer = Number(h ** (b % 3));
-                break;
-            case 64:
-                correctAnswer = Number((b + g + h) ** 2);
-                break;
-            case 65:
-                correctAnswer = Number(b * (h % 5) + g);
-                break;
-            case 66:
-                correctAnswer = Number((h ** 2) % b);
-                break;
-            case 67:
-                correctAnswer = Number((b + g * h) % b);
-                break;
-            case 68:
-                correctAnswer = Number((h + b * g) ** 2);
-                break;
-            case 69:
-                correctAnswer = Number(h ** 2 + b ** 2);
-                break;
-            case 70:
-                correctAnswer = Number((b * h + g) % h);
-                break;
-            case 71:
-                correctAnswer = Number((h + b) * (g + 1));
-                break;
-            case 72:
-                correctAnswer = Number((b + g) * (h % 5));
-                break;
-            case 73:
-                correctAnswer = (h ** 2 + b) % g;
-                break;
-            case 74:
-                correctAnswer = Number((b * h) ** 2);
-                break;
-            case 75:
-                correctAnswer = Number((h + b * g) % 7);
-                break;
-            default:
-                console.log("Oops.");
-                incorrectCount++;
-                return;
-        }
+        let correctAnswer = questions[choice].answer();;
 
         if (answer == correctAnswer) {
             console.log(chalk.green("✔") + " Correct.");
