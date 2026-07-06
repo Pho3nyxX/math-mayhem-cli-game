@@ -149,7 +149,6 @@ import { scoreTiers } from "./scoreTiers.js";
     console.log("h =", h);
     console.log("i =", i);
 
-    let questionEntries = Object.entries(questions);
     let correctCount = 0;
     let incorrectCount = 0;
     let timer;
@@ -166,7 +165,6 @@ import { scoreTiers } from "./scoreTiers.js";
     let countdown;
     let streak = 0;
     let highStreak = 0;
-    let top5;
     let currentDifficulty = "easy";
     let totalAsked = 0;
     const maxQuestions = 20;
@@ -181,14 +179,13 @@ import { scoreTiers } from "./scoreTiers.js";
         medium: 0,
         hard: 0
     };
-    let score;
-    let tier;
     let wrongStreak = 0;
     let easyQuestion = [];
     let mediumQuestion = [];
     let hardQuestion = [];
-
-    for (const [key, question] of questionEntries) {
+    
+    // group questions based on levels
+    for (const [key, question] of Object.entries(questions)) {
         if (question.level === "easy") {
             easyQuestion.push([key, question]);
         } else if (question.level === "medium") {
@@ -304,8 +301,8 @@ import { scoreTiers } from "./scoreTiers.js";
                 console.log("I'm Sorry! You Failed!");
             }
 
-            score = correctCount;
-            tier = getTier(score);
+            let score = correctCount;
+            let tier = getTier(score);
 
             console.log(`${tier.label} ${tier.emoji}`);
             console.log(tier.description);
@@ -319,7 +316,7 @@ import { scoreTiers } from "./scoreTiers.js";
             saveScore(currentUser, correctCount, highStreak, tier.label, () => {
                 // leaderboard
                 scores.sort((a, b) => b.score - a.score);
-                top5 = scores.slice(0, 5);
+                let top5 = scores.slice(0, 5);
 
                 console.log("\nLeaderboard:");
                 top5.forEach((rank, i) => {
