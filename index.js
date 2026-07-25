@@ -38,18 +38,6 @@ import { scoreTiers } from "./scoreTiers.js";
 ╚══════════════════╝
     `;
 
-    // show variable and value
-    // console.log("Variables and Values:");
-    // console.log("a =", a);
-    // console.log("b =", b);
-    // console.log("c =", c);
-    // console.log("d =", d);
-    // console.log("e =", e);
-    // console.log("f =", f);
-    // console.log("g =", g);
-    // console.log("h =", h);
-    // console.log("i =", i);
-
     let correctCount = 0;
     let incorrectCount = 0;
     let timer;
@@ -69,7 +57,7 @@ import { scoreTiers } from "./scoreTiers.js";
     let currentDifficulty = "easy";
     let totalAsked = 0;
     const maxQuestions = 20;
-    let baseTime = 50;
+    let baseTime = 10;
     let timeDecrease = {
         easy: 1,
         medium: 2,
@@ -697,8 +685,24 @@ import { scoreTiers } from "./scoreTiers.js";
 
             timeLeft--;
 
-            if (timeLeft <= 0) {
+            if (timeLeft < 0) {
                 clearInterval(countdown);
+
+                if (!answered) {
+                    answered = true;
+
+                    const animate = chalkAnimation.glitch("⏰ Time's up!");
+
+                    setTimeout(() => {
+                        animate.stop();
+                        console.log();
+
+                        incorrectCount++;
+                        incorrectQuestions.push(questions[currentQuestion]);
+
+                        askQuestions();
+                    }, 1500);
+                }
             }
         }, 1000);
 
