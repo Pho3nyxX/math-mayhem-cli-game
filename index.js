@@ -1,15 +1,15 @@
-import readline from "readline";
 import chalk from "chalk";
+import chalkAnimation from 'chalk-animation';
+import gradient from 'gradient-string';
+import inquirer from 'inquirer';
+import { input, select, Separator } from '@inquirer/prompts';
+import { createSpinner } from 'nanospinner'
+import figlet from "figlet";
 import { writeFile, readFile } from "node:fs";
 import { scoreTiers } from "./scoreTiers.js";
 
 
-(function () {
-
-    const readLine = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-    })
+(async function () {
 
     // variables & names
     let a = '9';
@@ -21,6 +21,69 @@ import { scoreTiers } from "./scoreTiers.js";
     let g = 0;
     let h = 12;
     let i = 'the';
+
+    const variablesBox = `
+╔══════════════════╗
+║    VARIABLES     ║
+╠══════════════════╣
+║ a = ${String(a).padEnd(13)}║
+║ b = ${String(b).padEnd(13)}║
+║ c = ${String(c).padEnd(13)}║
+║ d = ${String(d).padEnd(13)}║
+║ e = ${String(e).padEnd(13)}║
+║ f = ${String(f).padEnd(13)}║
+║ g = ${String(g).padEnd(13)}║
+║ h = ${String(h).padEnd(13)}║
+║ i = ${String(i).padEnd(13)}║
+╚══════════════════╝
+    `;
+
+    // show variable and value
+    // console.log("Variables and Values:");
+    // console.log("a =", a);
+    // console.log("b =", b);
+    // console.log("c =", c);
+    // console.log("d =", d);
+    // console.log("e =", e);
+    // console.log("f =", f);
+    // console.log("g =", g);
+    // console.log("h =", h);
+    // console.log("i =", i);
+
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let timer;
+    let warningTimer;
+    let answered = false;
+    let currentQuestion;
+    let correctQuestions = [];
+    let incorrectQuestions = [];
+    const path = "./scores.json";
+    let currentUser;
+    let scores = [];
+    let highest;
+    let timeLeft = 0;
+    let countdown;
+    let streak = 0;
+    let highStreak = 0;
+    let currentDifficulty = "easy";
+    let totalAsked = 0;
+    const maxQuestions = 20;
+    let baseTime = 50;
+    let timeDecrease = {
+        easy: 1,
+        medium: 2,
+        hard: 3
+    };
+    let correct = {
+        easy: 0,
+        medium: 0,
+        hard: 0
+    };
+    let wrongStreak = 0;
+    let easyQuestion = [];
+    let mediumQuestion = [];
+    let hardQuestion = [];
 
     // questions and answers list
     const questions = {
@@ -103,88 +166,7 @@ import { scoreTiers } from "./scoreTiers.js";
         75: { text: "(h + b * g) % 7?", level: "hard", answer: () => Number((h + b * g) % 7) },
     };
 
-    // print instructions
-    console.log(chalk.yellow('\n=================================================================================='));
-    console.log(chalk.green.bold('🎮  WELCOME TO MATH MAYHEM  🎮'));
-    console.log(chalk.yellow('==================================================================================\n'));
-
-    console.log(chalk.white('Get ready to test your speed, accuracy, and brain power!\n'));
-
-    console.log(chalk.cyan('GAME RULES:'));
-    console.log(chalk.white('• You will be given ') + chalk.green.bold('20 questions'));
-    console.log(chalk.white('• Try to answer each question before time runs out'));
-    console.log(chalk.white('• Score ') + chalk.green.bold('15 or higher') + chalk.white(' to PASS'));
-    console.log(chalk.white('• Score ') + chalk.red.bold('14 or lower') + chalk.white(' to FAIL\n'));
-
-    console.log(chalk.cyan('TIMER SYSTEM:'));
-    console.log(chalk.white('• You start with ') + chalk.green.bold('50 seconds'));
-    console.log(chalk.white('• Each correct answer ') + chalk.green.bold('REDUCES your time'));
-    console.log(chalk.white('• The better you perform, the faster the game becomes!\n'));
-
-    console.log(chalk.cyan('ADAPTIVE DIFFICULTY:'));
-    console.log(chalk.white('• Get ') + chalk.green.bold('3 correct answers in a row') + chalk.white(' → Difficulty increases'));
-    console.log(chalk.white('   EASY → MEDIUM → HARD'));
-    console.log('');
-    console.log(chalk.white('• Get ') + chalk.red.bold('2 wrong answers') + chalk.white(' → Difficulty decreases'));
-    console.log(chalk.white('   HARD → MEDIUM → EASY\n'));
-
-    console.log(chalk.cyan('DIFFICULTY BREAKDOWN:'));
-    console.log(chalk.green('• EASY: ') + chalk.white('Simple arithmetic'));
-    console.log(chalk.blue('• MEDIUM: ') + chalk.white('Mixed problems'));
-    console.log(chalk.red('• HARD: ') + chalk.white('Complex / nested expressions\n'));
-
-    console.log(chalk.magenta.bold('Stay sharp. Think fast. Adapt quickly.\n'));
-
-    console.log(chalk.yellow('==================================================================================\n'));
-
-    // show variable and value
-    console.log("Variables and Values:");
-    console.log("a =", a);
-    console.log("b =", b);
-    console.log("c =", c);
-    console.log("d =", d);
-    console.log("e =", e);
-    console.log("f =", f);
-    console.log("g =", g);
-    console.log("h =", h);
-    console.log("i =", i);
-
-    let correctCount = 0;
-    let incorrectCount = 0;
-    let timer;
-    let warningTimer;
-    let answered = false;
-    let currentQuestion;
-    let correctQuestions = [];
-    let incorrectQuestions = [];
-    const path = "./scores.json";
-    let currentUser;
-    let scores = [];
-    let highest;
-    let timeLeft = 0;
-    let countdown;
-    let streak = 0;
-    let highStreak = 0;
-    let currentDifficulty = "easy";
-    let totalAsked = 0;
-    const maxQuestions = 20;
-    let baseTime = 50;
-    let timeDecrease = {
-        easy: 1,
-        medium: 2,
-        hard: 3
-    };
-    let correct = {
-        easy: 0,
-        medium: 0,
-        hard: 0
-    };
-    let wrongStreak = 0;
-    let easyQuestion = [];
-    let mediumQuestion = [];
-    let hardQuestion = [];
-    
-    // group questions based on levels
+    // organize questions into difficulty-based groups
     for (const [key, question] of Object.entries(questions)) {
         if (question.level === "easy") {
             easyQuestion.push([key, question]);
@@ -195,7 +177,12 @@ import { scoreTiers } from "./scoreTiers.js";
         }
     }
 
-    // adaptive timer adjustment
+    const sleep = (ms = 1000) => {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // ============== helper functions start ===============
+    // calculate remaining time based on correct answers and difficulty
     function updateTime() {
         return baseTime
             - (correct.easy * timeDecrease.easy)
@@ -203,12 +190,14 @@ import { scoreTiers } from "./scoreTiers.js";
             - (correct.hard * timeDecrease.hard);
     }
 
+    // determine player rank based on final score
     function getTier(score) {
         return scoreTiers.find(
             tier => score >= tier.min && score <= tier.max
         );
     }
 
+    // validate answer and update player stats
     function getAnswer(choice, answer) {
         let correctAnswer = questions[choice].answer();;
 
@@ -253,265 +242,7 @@ import { scoreTiers } from "./scoreTiers.js";
         adjustDifficulty();
     }
 
-    // randomly shuffle the question array and returns the first 'num' items
-    function shuffleQuestions(entries, num) {
-        const shuffled = [...entries].sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, num);
-    }
-
-    // bring game back to start
-    function resetGame() {
-        correctCount = 0;
-        incorrectCount = 0;
-        highStreak = 0;
-        streak = 0;
-        answered = false;
-
-        correct = {
-            easy: 0,
-            medium: 0,
-            hard: 0
-        };
-
-        // clear timers
-        clearTimeout(timer);
-        clearTimeout(warningTimer);
-
-        console.clear();
-        console.log("....Start of New Game....");
-    }
-
-    function askQuestions() {
-        console.clear();
-
-        if (totalAsked >= maxQuestions) {
-            clearInterval(countdown);
-            clearTimeout(timer);
-            clearTimeout(warningTimer);
-
-            console.log("\n--------------------------------");
-            console.log("We've come to the end! You got...");
-            console.log(`Correct: ${correctCount}`);
-            console.log(`Incorrect: ${incorrectCount}`);
-            console.log("--------------------------------\n");
-
-            if (correctCount >= 15) {
-                console.log("Well Done! You Passed!");
-            } else {
-                console.log("I'm Sorry! You Failed!");
-            }
-
-            let score = correctCount;
-            let tier = getTier(score);
-
-            console.log(`${tier.label} ${tier.emoji}`);
-            console.log(tier.description);
-
-            console.log("\nCorrect Questions:");
-            console.log(correctQuestions);
-
-            console.log("\nIncorrect Questions:");
-            console.log(incorrectQuestions);
-
-            saveScore(currentUser, correctCount, highStreak, tier.label, () => {
-                // leaderboard
-                scores.sort((a, b) => b.score - a.score);
-                let top5 = scores.slice(0, 5);
-
-                console.log("\nLeaderboard:");
-                top5.forEach((rank, i) => {
-                    console.log(`${i + 1}. ${rank.user}: ${rank.score}`);
-                })
-
-                readLine.question("\nDo you wish to play again? (Type 'yes', 'y' or 'no', 'n'). \n", function (replayAnswer) {
-                    if (replayAnswer.toLowerCase() === 'yes' || replayAnswer.toLowerCase() === 'y') {
-                        resetGame();
-                        startGame();
-                    } else {
-                        readLine.close();
-                    }
-                });
-            });
-
-            return;
-        }
-
-        // update timer
-        timeLeft = updateTime();
-
-        // prevent negative timer
-        timeLeft = Math.max(3, timeLeft);
-
-        // clear any previous countdown
-        clearInterval(countdown);
-
-        let [questionKey, questionObj] = getNextQuestion();
-
-        // increment questions asked
-        totalAsked++;
-
-        currentQuestion = questionKey;
-        answered = false;
-
-        process.stdout.write(`What is ${questionObj.text} `);
-        console.log("");
-
-        clearInterval(countdown);
-        clearTimeout(timer);
-        clearTimeout(warningTimer);
-
-        // ui countdown
-        countdown = setInterval(() => {
-            process.stdout.write(`\rTime left: ${chalk.red(`${timeLeft}s`)}   `);
-
-            timeLeft--;
-
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-            }
-        }, 1000);
-
-        // warning timer 
-        if (timeLeft > 5) {
-            warningTimer = setTimeout(() => {
-                let timerText = `Time left: ${timeLeft}s`;
-                let warningText = "5 seconds left!";
-
-                let width = process.stdout.columns;
-
-                // space between left and right text
-                let space = Math.max(1, width - (timerText.length + warningText.length));
-
-                process.stdout.write(
-                    `\r${chalk.red(timerText)}${" ".repeat(space)}${chalk.yellow(warningText)}`
-                );
-            }, (timeLeft - 5) * 1000);
-        }
-
-        // main timer (end question)
-        timer = setTimeout(() => {
-            if (!answered) {
-                answered = true;
-
-                clearInterval(countdown);
-
-                console.log(chalk.red("\n Time's up!"));
-
-                incorrectCount++;
-                incorrectQuestions.push(questionObj.text);
-
-                setTimeout(() => {
-                    askQuestions();
-                }, 1500);
-            }
-        }, timeLeft * 1000);
-    }
-
-    // save user score
-    function saveScore(user, score, highStreak, label, callback) {
-
-        readFile(path, "utf-8", (err, data) => {
-
-            // check if file exist
-            if (!err && data) {
-                try {
-                    scores = JSON.parse(data);
-                } catch {
-                    scores = [];
-                }
-            }
-
-            // add new score
-            scores.push({ user, score, highStreak, label });
-
-            writeFile(path, JSON.stringify(scores, null, 2), (err) => {
-                if (err) throw err;
-
-                // calculate highest score
-                highest = scores.reduce((max, current) => {
-                    if (current.score > max.score) {
-                        return current;
-                    } else {
-                        return max;
-                    }
-                });
-
-                console.log(`
-                    ========================
-                    🏆 HIGHEST SCORE
-                    ========================
-                    User: ${highest.user}
-                    Score: ${highest.score}
-                    Best Streak: ${highest.highStreak}
-                    ========================
-                `);
-
-                callback();
-            })
-        });
-    }
-
-    // ask difficulty question
-    function startGame() {
-        readLine.question("Choose difficulty (easy, medium, hard): ", function (level) {
-
-            level = level.toLowerCase().trim();
-
-            if (!["easy", "medium", "hard"].includes(level)) {
-                console.log("Invalid choice. Defaulting to easy.");
-                level = "easy";
-            }
-
-            // set starting difficulty
-            currentDifficulty = level === "hard" ? "hard" : level;
-
-            console.log(`\nStarting ${level.toUpperCase()} mode...\n`);
-
-            setTimeout(() => {
-                askQuestions();
-            }, 1000);
-        });
-    }
-
-    // loop through questions & listen for user input
-    readLine.on("line", (givenAnswer) => {
-        if (answered) return;
-
-        answered = true;
-
-        // stop timer if user answer in time
-        if (timer) {
-            clearInterval(countdown);
-            clearTimeout(timer);
-            clearTimeout(warningTimer);
-        }
-
-        getAnswer(Number(currentQuestion), givenAnswer);
-
-        setTimeout(() => {
-            askQuestions();
-        }, 1500);
-    });
-
-    // get user input (yes or no)
-    readLine.question("\nDo you wish to continue? (Type 'yes', 'y' or 'no', 'n'). \n", function (userAnswer) {
-
-        if (userAnswer.toLowerCase() === 'yes' || userAnswer.toLowerCase() === 'y') {
-            // get user name
-            readLine.question("\nWhat is your name? ", function (name) {
-                currentUser = name;
-
-                console.log("\nWelcome " + currentUser);
-
-                startGame();
-            });
-        } else {
-            readLine.close();
-        }
-
-    });
-
-    // adaptive difficulty
+    // adjust difficulty based on player performance
     function adjustDifficulty() {
         // increase difficulty if doing well
         if (streak >= 3) {
@@ -543,6 +274,7 @@ import { scoreTiers } from "./scoreTiers.js";
         }
     }
 
+    // select a random question from the current difficulty level
     function getNextQuestion() {
         let ques;
 
@@ -555,5 +287,456 @@ import { scoreTiers } from "./scoreTiers.js";
         }
 
         return ques[Math.floor(Math.random() * ques.length)];
+    }
+
+    // randomly select questions from a difficulty group
+    function shuffleQuestions(entries, num) {
+        const shuffled = [...entries].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, num);
+    }
+
+    // reset game stats and prepare for a new round
+    function resetGame() {
+        correctCount = 0;
+        incorrectCount = 0;
+        highStreak = 0;
+        streak = 0;
+        answered = false;
+
+        correct = {
+            easy: 0,
+            medium: 0,
+            hard: 0
+        };
+
+        // clear timers
+        clearTimeout(timer);
+        clearTimeout(warningTimer);
+
+        console.clear();
+        console.log("....Start of New Game....");
+    }
+
+    // save player results and update leaderboard
+    function saveScore(user, score, highStreak, label, callback) {
+
+        readFile(path, "utf-8", (err, data) => {
+
+            // check if file exist
+            if (!err && data) {
+                try {
+                    scores = JSON.parse(data);
+                } catch {
+                    scores = [];
+                }
+            }
+
+            // add new score
+            scores.push({ user, score, highStreak, label });
+
+            writeFile(path, JSON.stringify(scores, null, 2), (err) => {
+                if (err) throw err;
+
+                // calculate highest score
+                highest = scores.reduce((max, current) => {
+                    if (current.score > max.score) {
+                        return current;
+                    } else {
+                        return max;
+                    }
+                });
+
+                console.log(`
+    ${gradient.rainbow("╔════════════════════════════╗")}
+    ${gradient.rainbow("     🏆 HIGHEST SCORE 🏆")}
+    ${gradient.rainbow("╚════════════════════════════╝")}
+    
+    ${chalk.bold.yellow("👤 User:")} ${highest.user}
+    ${chalk.bold.green("🏆 Score:")} ${highest.score}
+    ${chalk.bold.cyan("🔥 Best Streak:")} ${highest.highStreak}
+                `);
+
+                callback();
+            })
+        });
+    }
+
+    function displayBanner(title, gradientStyle = gradient.pastel) {
+        console.log(
+            gradientStyle(
+                figlet.textSync(title, {
+                    horizontalLayout: "default"
+                })
+            )
+        );
+    }
+
+    async function revealResults() {
+        const spinner = createSpinner(
+            "Calculating final score..."
+        ).start();
+
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        spinner.success({
+            text: "Results calculated!"
+        });
+    }
+
+    function displayStats(correct, incorrect) {
+        console.log(`
+    ${gradient.morning("╔════════════════════════════╗")}
+    ${gradient.morning("         FINAL STATS")}
+    ${gradient.morning("╚════════════════════════════╝")}
+
+    ${chalk.bold.green("✔")} ${gradient.morning(`Correct Answers : ${correct}`)}
+    ${chalk.bold.red("✖")} ${gradient.morning(`Incorrect       : ${incorrect}`)}
+        `);
+    }
+
+    function displayRank(level) {
+        console.log(
+            chalk.yellow(`
+    ${chalk.yellow("╔════════════════════════════╗")}
+    ${chalk.yellow("        🏅 PLAYER RANK")}
+    ${chalk.yellow("╚════════════════════════════╝")}
+
+    ${level.emoji.padEnd(3)}${chalk.bold(level.label)}
+
+    ${level.description}
+            `)
+        );
+    }
+
+    function displayQuestions(correct, incorrect) {
+
+        console.log(chalk.green(`\n✔ CORRECT QUESTIONS\n`));
+
+        correct.forEach((question, questionIndex) => {
+            console.log(`  ${questionIndex + 1}. ${question}`);
+        });
+
+        console.log(chalk.red(`\n✖ MISSED QUESTIONS\n`));
+
+        incorrect.forEach((question, questionIndex) => {
+            console.log(`  ${questionIndex + 1}. ${question}`);
+        });
+    }
+
+    function displayLeaderboard(players) {
+        console.log(`
+    ${gradient.rainbow("╔════════════════════════════╗")}
+    ${gradient.rainbow("       🏆 LEADERBOARD")}
+    ${gradient.rainbow("╚════════════════════════════╝")}
+            `);
+
+        const medals = ["🥇", "🥈", "🥉"];
+
+        players.forEach((player, index) => {
+            const medal = medals[index] ?? "🏅";
+
+            console.log(
+                `    ${medal} ${chalk.bold.yellow(player.user.padEnd(10))} ${chalk.bold.green(player.score)}pts`
+            );
+        });
+    }
+
+    async function showFinalResults() {
+        const score = correctCount;
+        const tier = getTier(score);
+        const passed = score >= 15;
+
+        const titleMessage = passed ? "YOU PASSED" : "YOU FAILED";
+
+        const titleGradient = passed
+            ? gradient.rainbow
+            : gradient.passion;
+
+        displayBanner(titleMessage, titleGradient);
+
+        console.log(
+            chalk.bold(
+                passed
+                    ? `\n🎉 Congrats ${currentUser}!\n`
+                    : `\n☹️ Sorry ${currentUser}!\n`
+            )
+        );
+
+        await revealResults();
+
+        displayStats(correctCount, incorrectCount);
+        displayRank(tier);
+        displayQuestions(correctQuestions, incorrectQuestions);
+
+        saveScore(currentUser, score, highStreak, tier.label, async () => {
+            scores.sort((a, b) => b.score - a.score);
+            let top5 = scores.slice(0, 5);
+
+            displayLeaderboard(top5);
+
+            const playAgain = await safeSelect({
+                message: "\nDo you wish to play again?",
+                choices: [
+                    { name: "Yes", value: true },
+                    { name: "No", value: false }
+                ]
+            });
+
+            if (playAgain) {
+                resetGame();
+                await startGame();
+            } else {
+                console.log(chalk.cyan("\nThanks for playing Math Mayhem! 🚀"));
+                process.exit(0);
+            }
+        });
+    }
+    // ============== helper functions end ===============
+
+    // ============== graceful exit helpers start ===========
+    // cleanup function
+    function cleanupAndExit() {
+        console.log('\n👋 until next time!');
+
+        clearInterval(countdown);
+        clearTimeout(timer);
+        clearTimeout(warningTimer);
+
+        process.exit(0);
+    }
+
+    // safe input prompt
+    async function safeInput(message) {
+        try {
+            return await input({ message });
+        } catch (error) {
+            if (error.name === 'ExitPromptError') {
+                cleanupAndExit();
+            }
+            throw error;
+        }
+    }
+
+    // safe select prompt
+    async function safeSelect(config) {
+        try {
+            return await select(config);
+        } catch (error) {
+            if (error.name === 'ExitPromptError') {
+                cleanupAndExit();
+            }
+            throw error;
+        }
+    }
+    // ============== graceful exit helpers end ===============
+
+    // print instructions
+    async function showWelcomeMessage() {
+        console.log('\n');
+
+        console.log(
+            gradient.morning(`                                 Welcome to\n`)
+        );
+
+        const title = figlet.textSync("MATH MAYHEM", {
+            font: "ANSI Shadow",
+            horizontalLayout: "default"
+        });
+
+        console.log(gradient.morning(title));
+
+        console.log(
+            gradient.morning(`                         Test Your Speed • Accuracy • IQ\n`)
+        );
+
+        console.log(chalk.bgCyan('GAME RULES:'));
+        console.log(chalk.white('• You will be given ') + chalk.green.bold('20 questions.'));
+        console.log(chalk.white('• Try to answer each question before the time runs out.'));
+        console.log(chalk.white('• Score ') + chalk.green.bold('15 or higher') + chalk.white(' to PASS.'));
+        console.log(chalk.white('• Score ') + chalk.red.bold('14 or lower') + chalk.white(' to FAIL.\n'));
+
+        console.log(chalk.bgCyan('TIMER SYSTEM:'));
+        console.log(chalk.white('• You start with ') + chalk.green.bold('50 seconds.'));
+        console.log(chalk.white('• Each correct answer ') + chalk.green.bold('REDUCES your time.'));
+        console.log(chalk.white('• The better you perform, the faster the game becomes!\n'));
+
+        console.log(chalk.bgCyan('ADAPTIVE DIFFICULTY:'));
+        console.log(chalk.white('• Get ') + chalk.green.bold('3 correct answers in a row') + chalk.white(' → Difficulty increases'));
+        console.log(chalk.white('   EASY → MEDIUM → HARD'));
+        console.log('');
+        console.log(chalk.white('• Get ') + chalk.red.bold('2 wrong answers') + chalk.white(' → Difficulty decreases'));
+        console.log(chalk.white('   HARD → MEDIUM → EASY\n'));
+
+        console.log(chalk.bgCyan('DIFFICULTY BREAKDOWN:'));
+        console.log(chalk.green('• EASY: ') + chalk.white('Simple arithmetic.'));
+        console.log(chalk.blue('• MEDIUM: ') + chalk.white('Mixed problems.'));
+        console.log(chalk.red('• HARD: ') + chalk.white('Complex / nested expressions.\n'));
+
+        const animation = chalkAnimation.rainbow(
+            "Stay sharp. Think fast. Adapt quickly.\n"
+        );
+
+        await sleep();
+        animation.stop();
+
+        console.log(chalk.yellow('==================================================================================\n'));
+    };
+
+    // start program
+    await showWelcomeMessage();
+
+    // prompt user to continue
+    const promptYesOrNo = await safeSelect({
+        message: 'Do you wish to continue?',
+        choices: [
+            {
+                name: 'Yes',
+                value: true
+            },
+            {
+                name: 'No',
+                value: false
+            }
+        ],
+    });
+
+    // handle user confirmation response
+    if (promptYesOrNo) {
+        const answer = await safeInput('What is your name?');
+        currentUser = answer;
+
+        console.log(`\nWelcome ${currentUser}\n`);
+        await startGame();
+    } else {
+        cleanupAndExit();
+    }
+
+    // prompt user to select difficulty level
+    async function startGame() {
+        const level = await safeSelect({
+            message: "Choose difficulty:",
+            choices: [
+                {
+                    name: "Easy",
+                    value: "easy"
+                },
+                {
+                    name: "Medium",
+                    value: "medium"
+                },
+                {
+                    name: "Hard",
+                    value: "hard"
+                }
+            ]
+        });
+
+        // set starting difficulty
+        currentDifficulty = level;
+
+        console.log(`\nStarting ${level.toUpperCase()} mode...\n`);
+
+        setTimeout(() => {
+            askQuestions();
+        }, 1000);
+    }
+
+    // display questions, manage timer, and process user answers
+    async function askQuestions() {
+        console.clear();
+
+        if (totalAsked >= maxQuestions) {
+            clearInterval(countdown);
+            clearTimeout(timer);
+            clearTimeout(warningTimer);
+
+            await showFinalResults();
+            return;
+        }
+
+        // update timer
+        timeLeft = updateTime();
+
+        // prevent negative timer
+        timeLeft = Math.max(3, timeLeft);
+
+        clearInterval(countdown);
+        clearTimeout(timer);
+        clearTimeout(warningTimer);
+
+        let [questionKey, questionObj] = getNextQuestion();
+
+        totalAsked++;
+
+        currentQuestion = questionKey;
+        answered = false;
+
+        // display question & variables
+        let width = process.stdout.columns;
+
+        let questionText = `\nWhat is ${questionObj.text}`;
+        let currentTimerText = `Time left: ${timeLeft}s`;
+
+        let variableLines = variablesBox.split("\n");
+
+        // question
+        console.log(questionText);
+
+        // remaining variables
+        for (let index = 1; index < variableLines.length; index++) {
+            console.log(
+                `${chalk.dim.cyan(variableLines[index])}`
+            );
+        }
+
+        // start countdown timer
+        countdown = setInterval(() => {
+            process.stdout.write(
+                `\rTime left: ${chalk.red(`${timeLeft}s`)}   `
+            );
+
+            timeLeft--;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+            }
+        }, 1000);
+
+        // warning timer
+        if (timeLeft > 5) {
+            warningTimer = setTimeout(() => {
+                let warningText = "5 seconds left!";
+
+                let width = process.stdout.columns;
+
+                let space = Math.max(
+                    1,
+                    width - (currentTimerText.length + warningText.length)
+                );
+
+                process.stdout.write(
+                    `\r${chalk.red(currentTimerText)}${" ".repeat(space)}${chalk.yellow(warningText)}`
+                );
+
+            }, (timeLeft - 5) * 1000);
+        }
+
+        // get user answer
+        const givenAnswer = await safeInput("Your answer:");
+
+        if (answered) return;
+
+        answered = true;
+
+        // stop timer after answer
+        clearInterval(countdown);
+        clearTimeout(timer);
+        clearTimeout(warningTimer);
+
+        getAnswer(Number(currentQuestion), givenAnswer);
+
+        setTimeout(() => {
+            askQuestions();
+        }, 1500);
     }
 })();

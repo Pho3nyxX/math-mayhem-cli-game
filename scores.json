@@ -1,42 +1,36 @@
 [
   {
-    "user": "joe",
-    "score": 4,
-    "highStreak": 1
-  },
-  {
-    "user": "sally",
-    "score": 3,
-    "highStreak": 2
-  },
-  {
-    "user": "john",
-    "score": 1,
-    "highStreak": 1
-  },
-  {
-    "user": "trish",
-    "score": 6,
-    "highStreak": 1
-  },
-  {
-    "user": "billy",
-    "score": 8,
-    "highStreak": 1
-  },
-  {
     "user": "gladis",
     "score": 4,
     "highStreak": 4
   },
   {
-    "user": "evans",
-    "score": 4,
-    "highStreak": 2
-  },
-  {
     "user": "jaxson",
     "score": 17,
+    "highStreak": 3,
+    "label": "Advanced"
+  },
+  {
+    "user": "Robby",
+    "score": 18,
+    "highStreak": 3,
+    "label": "Advanced"
+  },
+  {
+    "user": "Leopold",
+    "score": 16,
+    "highStreak": 3,
+    "label": "Advanced"
+  },
+  {
+    "user": "Shan",
+    "score": 16,
+    "highStreak": 3,
+    "label": "Advanced"
+  },
+  {
+    "user": "Ariel",
+    "score": 16,
     "highStreak": 3,
     "label": "Advanced"
   }
