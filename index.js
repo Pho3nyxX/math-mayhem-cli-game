@@ -629,14 +629,24 @@ import { scoreTiers } from "./scoreTiers.js";
         }, 1000);
     }
 
+    function resetTerminal() {
+        clearInterval(countdown);
+        clearTimeout(timer);
+        clearTimeout(warningTimer);
+
+        // clear console
+        process.stdout.write("\x1Bc");
+        // console.clear()
+    }
+
     // display questions, manage timer, and process user answers
     async function askQuestions() {
-        console.clear();
+        resetTerminal();
 
         if (totalAsked >= maxQuestions) {
-            clearInterval(countdown);
-            clearTimeout(timer);
-            clearTimeout(warningTimer);
+            // clearInterval(countdown);
+            // clearTimeout(timer);
+            // clearTimeout(warningTimer);
 
             await showFinalResults();
             return;
@@ -648,10 +658,6 @@ import { scoreTiers } from "./scoreTiers.js";
         // prevent negative timer
         timeLeft = Math.max(3, timeLeft);
 
-        clearInterval(countdown);
-        clearTimeout(timer);
-        clearTimeout(warningTimer);
-
         let [questionKey, questionObj] = getNextQuestion();
 
         totalAsked++;
@@ -660,8 +666,6 @@ import { scoreTiers } from "./scoreTiers.js";
         answered = false;
 
         // display question & variables
-        let width = process.stdout.columns;
-
         let questionText = `\nWhat is ${questionObj.text}`;
         let currentTimerText = `Time left: ${timeLeft}s`;
 
@@ -695,12 +699,15 @@ import { scoreTiers } from "./scoreTiers.js";
 
                     setTimeout(() => {
                         animate.stop();
-                        console.log();
 
                         incorrectCount++;
                         incorrectQuestions.push(questions[currentQuestion]);
 
-                        askQuestions();
+                        resetTerminal();
+
+                        setTimeout(() => {
+                            askQuestions();
+                        }, 50);
                     }, 1500);
                 }
             }
@@ -710,7 +717,6 @@ import { scoreTiers } from "./scoreTiers.js";
         if (timeLeft > 5) {
             warningTimer = setTimeout(() => {
                 let warningText = "5 seconds left!";
-
                 let width = process.stdout.columns;
 
                 let space = Math.max(
@@ -721,7 +727,6 @@ import { scoreTiers } from "./scoreTiers.js";
                 process.stdout.write(
                     `\r${chalk.red(currentTimerText)}${" ".repeat(space)}${chalk.yellow(warningText)}`
                 );
-
             }, (timeLeft - 5) * 1000);
         }
 
@@ -732,7 +737,7 @@ import { scoreTiers } from "./scoreTiers.js";
 
         answered = true;
 
-        // stop timer after answer
+        // stop timers after answer
         clearInterval(countdown);
         clearTimeout(timer);
         clearTimeout(warningTimer);
@@ -740,7 +745,11 @@ import { scoreTiers } from "./scoreTiers.js";
         getAnswer(Number(currentQuestion), givenAnswer);
 
         setTimeout(() => {
-            askQuestions();
+            resetTerminal();
+
+            setTimeout(() => {
+                askQuestions();
+            }, 50);
         }, 1500);
     }
 })();
