@@ -24,6 +24,7 @@
     "figlet": "^1.11.0",
     "gradient-string": "^3.0.0",
     "inquirer": "^14.0.2",
-    "nanospinner": "^1.2.2"
+    "nanospinner": "^1.2.2",
+    "play-sound": "^1.1.6"
   }
 }

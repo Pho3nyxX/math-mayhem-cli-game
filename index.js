@@ -7,6 +7,7 @@ import { createSpinner } from 'nanospinner'
 import figlet from "figlet";
 import { writeFile, readFile } from "node:fs";
 import { scoreTiers } from "./scoreTiers.js";
+import { playSound } from "./audio/sounds.js";
 
 
 (async function () {
@@ -190,6 +191,7 @@ import { scoreTiers } from "./scoreTiers.js";
         let correctAnswer = questions[choice].answer();;
 
         if (answer == correctAnswer) {
+            playSound("correct");
             console.log(chalk.green("✔") + " Correct.");
 
             // track correct answers
@@ -209,9 +211,14 @@ import { scoreTiers } from "./scoreTiers.js";
                 console.log(chalk.yellow(`New High Streak: ${highStreak}`));
             }
 
+            if (streak === 3) {
+                playSound("streak");
+            }
+
             // questions user got right
             correctQuestions.push(questions[choice].text);
         } else {
+            playSound("wrong");
             console.log(chalk.red("✖") + ` Incorrect. Correct answer: ${correctAnswer}`);
 
             // track incorrect answers
@@ -236,9 +243,11 @@ import { scoreTiers } from "./scoreTiers.js";
         if (streak >= 3) {
             if (currentDifficulty === "easy") {
                 currentDifficulty = "medium";
+                playSound("medium");
                 console.log(chalk.blue("\nDifficulty increased to MEDIUM"));
             } else if (currentDifficulty === "medium") {
                 currentDifficulty = "hard";
+                playSound("hard");
                 console.log(chalk.blue("\nDifficulty increased to HARD"));
             }
             streak = 0;
@@ -251,9 +260,11 @@ import { scoreTiers } from "./scoreTiers.js";
             ) {
                 if (currentDifficulty === "hard") {
                     currentDifficulty = "medium";
+                    playSound("medium");
                     console.log(chalk.magenta("\nDifficulty decreased to MEDIUM"));
                 } else if (currentDifficulty === "medium") {
                     currentDifficulty = "easy";
+                    playSound("easy");
                     console.log(chalk.magenta("\nDifficulty decreased to EASY"));
                 }
 
@@ -436,6 +447,13 @@ import { scoreTiers } from "./scoreTiers.js";
 
         const titleMessage = passed ? "YOU PASSED" : "YOU FAILED";
 
+        if (passed) {
+            playSound("victory");
+        }
+        else {
+            playSound("failure");
+        }
+
         const titleGradient = passed
             ? gradient.rainbow
             : gradient.passion;
@@ -478,6 +496,16 @@ import { scoreTiers } from "./scoreTiers.js";
                 process.exit(0);
             }
         });
+    }
+
+    function resetTerminal() {
+        clearInterval(countdown);
+        clearTimeout(timer);
+        clearTimeout(warningTimer);
+
+        // clear console
+        process.stdout.write("\x1Bc");
+        // console.clear()
     }
     // ============== helper functions end ===============
 
@@ -572,6 +600,7 @@ import { scoreTiers } from "./scoreTiers.js";
 
     // start program
     await showWelcomeMessage();
+    playSound("start");
 
     // prompt user to continue
     const promptYesOrNo = await safeSelect({
@@ -624,19 +653,11 @@ import { scoreTiers } from "./scoreTiers.js";
 
         console.log(`\nStarting ${level.toUpperCase()} mode...\n`);
 
+        playSound(level);
+
         setTimeout(() => {
             askQuestions();
         }, 1000);
-    }
-
-    function resetTerminal() {
-        clearInterval(countdown);
-        clearTimeout(timer);
-        clearTimeout(warningTimer);
-
-        // clear console
-        process.stdout.write("\x1Bc");
-        // console.clear()
     }
 
     // display questions, manage timer, and process user answers
@@ -696,6 +717,7 @@ import { scoreTiers } from "./scoreTiers.js";
                     answered = true;
 
                     const animate = chalkAnimation.glitch("⏰ Time's up!");
+                    playSound("timeUp");
 
                     setTimeout(() => {
                         animate.stop();
@@ -716,6 +738,7 @@ import { scoreTiers } from "./scoreTiers.js";
         // warning timer
         if (timeLeft > 5) {
             warningTimer = setTimeout(() => {
+                playSound("warning");
                 let warningText = "5 seconds left!";
                 let width = process.stdout.columns;
 
