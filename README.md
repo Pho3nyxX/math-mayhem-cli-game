@@ -81,7 +81,8 @@ cd math-mayhem-cli-game
 npm install
 ```
 **4. Install Audio Player:**  
-Math Mayhem uses mpv to play sounds.   
+Math Mayhem uses mpv to play sounds.  
+ 
 Install mpv:   
 **Ubuntu/Linux**
 ```bash
